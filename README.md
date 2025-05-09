@@ -16,10 +16,12 @@ A comprehensive Flutter application for managing academic conferences, paper sub
 ### Admin
 <table>
   <tr>
-    <td align="center"><b>Main Login Screen</b></td>
+    <td align="center"><b>Admin Login</b></td>
+    <td align="center"><b>Admin Side Menu</b></td>
   </tr>
   <tr>
     <td><img src="assets/images/admin/admin_login.png" alt="Admin Login" width="100%"/><br></td>
+    <td><img src="assets/images/admin/admin_sidemenu.png" alt="Admin Login" width="100%"/><br></td>
   </tr>
 </table>
 
@@ -80,6 +82,63 @@ A comprehensive Flutter application for managing academic conferences, paper sub
     <td><img src="assets/images/admin/paper_coauthor.png" alt="Paper Co-Authors" width="100%"/><br></td>
   </tr>
 </table>
+
+### Manage User Account
+<table>
+  <tr>
+    <td align="center"><b>List of Members</b></td>
+    <td align="center"><b>Member Details</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/member_manage.png" alt="List of Members" width="100%"/><br></td>
+    <td><img src="assets/images/admin/member_details.png" alt="Member Details" width="100%"/><br></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td align="center"><b>List of Reviewer</b></td>
+    <td align="center"><b>Reviewer Details</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/reviewer_manage.png" alt="List of Members" width="100%"/><br></td>
+    <td><img src="assets/images/admin/reviewer_details.png" alt="Reviewer Details" width="100%"/><br></td>
+  </tr>
+</table>
+
+### Manage Camera Ready & Payments
+<table>
+  <tr>
+    <td align="center"><b>List of Camera Ready</b></td>
+    <td align="center"><b>List of Payments</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/camera_ready_manage.png" alt="List of Camera Ready" width="100%"/><br></td>
+    <td><img src="assets/images/admin/payment_manage.png" alt="List of Payments" width="100%"/><br></td>
+  </tr>
+</table>
+
+### Manage Messages
+<table>
+  <tr>
+    <td align="center"><b>List of Messages</b></td>
+    <td align="center"><b>Messages Reply</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/messages_manage.png" alt="List of Messages" width="100%"/><br></td>
+    <td><img src="assets/images/admin/messages_details.png" alt="Messages Reply" width="100%"/><br></td>
+  </tr>
+</table>
+
+### Admin Settings
+<table>
+  <tr>
+    <td align="center"><b>Settings</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/setting_manage.png" alt="Settings" width="100%"/><br></td>
+  </tr>
+</table>
+
 
 ## Features
 
