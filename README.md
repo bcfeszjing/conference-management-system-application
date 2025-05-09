@@ -21,23 +21,21 @@ A comprehensive Flutter application for managing academic conferences, paper sub
   <tr>
     <td><img src="assets/images/admin/admin_login.png" alt="Admin Login" width="100%"/><br></td>
   </tr>
+</table>
+### Manage Conference
+<table>
   <tr>
-    <td align="center"><b>Paper Submission</b></td>
-    <td align="center"><b>Review Interface</b></td>
+    <td align="center"><b>Manage Conference</b></td>
+    <td align="center"><b>Add Conference</b></td>
+    <td align="center"><b>Edit Conference</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/paper_submission.png" alt="Paper Submission" width="100%"/><br><em>Show the paper submission form with fields and upload options</em></td>
-    <td><img src="screenshots/review_interface.png" alt="Review Interface" width="100%"/><br><em>Display the review interface with rubrics and evaluation options</em></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Conference Management</b></td>
-    <td align="center"><b>User Profile</b></td>
-  </tr>
-  <tr>
-    <td><img src="screenshots/conference_management.png" alt="Conference Management" width="100%"/><br><em>Show the conference creation/editing interface</em></td>
-    <td><img src="screenshots/user_profile.png" alt="User Profile" width="100%"/><br><em>Display the user profile with personal information and roles</em></td>
+    <td><img src="assets/images/admin/conference_manage.png.png" alt="Manage Conference" width="100%"/><br></td>
+    <td><img src="assets/images/admin/conference_add.png.png" alt="Add Conference" width="100%"/><br></td>
+    <td><img src="assets/images/admin/conference_edit.png.png" alt="Edit Conference" width="100%"/><br></td>
   </tr>
 </table>
+
 
 ## Features
 
