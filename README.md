@@ -26,17 +26,60 @@ A comprehensive Flutter application for managing academic conferences, paper sub
 ### Manage Conference
 <table>
   <tr>
-    <td align="center"><b>Manage Conference</b></td>
+    <td align="center"><b>List of Conference</b></td>
     <td align="center"><b>Add Conference</b></td>
     <td align="center"><b>Edit Conference</b></td>
   </tr>
   <tr>
-    <td><img src="assets/images/admin/conference_manage.png" alt="Manage Conference" width="100%"/><br></td>
+    <td><img src="assets/images/admin/conference_manage.png" alt="List of Conference" width="100%"/><br></td>
     <td><img src="assets/images/admin/conference_add.png" alt="Add Conference" width="100%"/><br></td>
     <td><img src="assets/images/admin/conference_edit.png" alt="Edit Conference" width="100%"/><br></td>
   </tr>
 </table>
 
+### Manage News
+<table>
+  <tr>
+    <td align="center"><b>List of News</b></td>
+    <td align="center"><b>Add News</b></td>
+    <td align="center"><b>Edit News</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/news_manage.png" alt="List of News" width="100%"/><br></td>
+    <td><img src="assets/images/admin/news_add.png" alt="Add News" width="100%"/><br></td>
+    <td><img src="assets/images/admin/news_edit.png" alt="Edit News" width="100%"/><br></td>
+  </tr>
+</table>
+
+### Manage Papers
+<table>
+  <tr>
+    <td align="center"><b>List of Papers</b></td>
+    <td align="center"><b>Manage Paper Dashboard</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/payment_manage.png" alt="List of Papers" width="100%"/><br></td>
+    <td><img src="assets/images/admin/paper_manage_dashboard.png" alt="Manage Paper Dashboard" width="100%"/><br></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td align="center"><b>Paper Details</b></td>
+    <td align="center"><b>Paper Review</b></td>
+    <td align="center"><b>Paper Camera Ready</b></td>
+    <td align="center"><b>Paper Publishing Management</b></td>
+    <td align="center"><b>Paper Payment</b></td>
+    <td align="center"><b>Paper Co-Authors</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/admin/paper_details.png" alt="Paper Details" width="100%"/><br></td>
+    <td><img src="assets/images/admin/paper_review.png" alt="Paper Review" width="100%"/><br></td>
+    <td><img src="assets/images/admin/paper_camera_ready.png" alt="Paper Camera Ready" width="100%"/><br></td>
+    <td><img src="assets/images/admin/paper_publishing_management.png" alt="Paper Publishing Management" width="100%"/><br></td>
+    <td><img src="assets/images/admin/paper_payment.png" alt="Paper Payment" width="100%"/><br></td>
+    <td><img src="assets/images/admin/paper_coauthor.png" alt="Paper Co-Authors" width="100%"/><br></td>
+  </tr>
+</table>
 
 ## Features
 
