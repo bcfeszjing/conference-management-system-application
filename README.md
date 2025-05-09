@@ -10,7 +10,7 @@ A comprehensive Flutter application for managing academic conferences, paper sub
     <td align="center"><b>Admin Dashboard</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/main_screen.png" alt="Main Login Screen" width="100%"/></td>
+    <td><img src="assets/images/CircleLogo.png" alt="Main Login Screen" width="100%"/></td>
     <td><img src="screenshots/admin_dashboard.png" alt="Admin Dashboard" width="100%"/></td>
   </tr>
   <tr>
