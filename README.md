@@ -30,9 +30,9 @@ A comprehensive Flutter application for managing academic conferences, paper sub
     <td align="center"><b>Edit Conference</b></td>
   </tr>
   <tr>
-    <td><img src="assets/images/admin/conference_manage.png.png" alt="Manage Conference" width="100%"/><br></td>
-    <td><img src="assets/images/admin/conference_add.png.png" alt="Add Conference" width="100%"/><br></td>
-    <td><img src="assets/images/admin/conference_edit.png.png" alt="Edit Conference" width="100%"/><br></td>
+    <td><img src="assets/images/admin/conference_manage.png" alt="Manage Conference" width="100%"/><br></td>
+    <td><img src="assets/images/admin/conference_add.png" alt="Add Conference" width="100%"/><br></td>
+    <td><img src="assets/images/admin/conference_edit.png" alt="Edit Conference" width="100%"/><br></td>
   </tr>
 </table>
 
