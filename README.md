@@ -4,7 +4,32 @@ A comprehensive Flutter application for managing academic conferences, paper sub
 
 ## Demo/Screenshots
 
-<!-- Insert screenshots here. Recommended: Main screen, Admin dashboard, User dashboard, Paper submission, Review process -->
+<table>
+  <tr>
+    <td align="center"><b>Main Login Screen</b></td>
+    <td align="center"><b>Admin Dashboard</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/main_screen.png" alt="Main Login Screen" width="100%"/></td>
+    <td><img src="screenshots/admin_dashboard.png" alt="Admin Dashboard" width="100%"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Paper Submission</b></td>
+    <td align="center"><b>Review Interface</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/paper_submission.png" alt="Paper Submission" width="100%"/></td>
+    <td><img src="screenshots/review_interface.png" alt="Review Interface" width="100%"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Conference Management</b></td>
+    <td align="center"><b>User Profile</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/conference_management.png" alt="Conference Management" width="100%"/></td>
+    <td><img src="screenshots/user_profile.png" alt="User Profile" width="100%"/></td>
+  </tr>
+</table>
 
 ## Features
 
