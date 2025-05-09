@@ -22,6 +22,7 @@ A comprehensive Flutter application for managing academic conferences, paper sub
     <td><img src="assets/images/admin/admin_login.png" alt="Admin Login" width="100%"/><br></td>
   </tr>
 </table>
+
 ### Manage Conference
 <table>
   <tr>
