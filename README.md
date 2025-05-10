@@ -199,7 +199,7 @@ A comprehensive Flutter application for managing academic conferences, paper sub
   <tr>
     <td><img src="assets/images/user/reviewer_manage.png" alt="List of Review" width="100%"/><br></td>
     <td><img src="assets/images/user/reviewer_review_paper.png" alt="Review Details" width="100%"/><br></td>
-    <td><img src="assets/images/user/reviewer_review_rubrics.png" alt="Review Rubrics" width="100%"/><br></td>>
+    <td><img src="assets/images/user/reviewer_review_rubrics.png" alt="Review Rubrics" width="100%"/><br></td>
   </tr>
 </table>
 
