@@ -166,6 +166,14 @@ A comprehensive Flutter application for managing academic conferences, paper sub
   <tr>
     <td align="center"><b>List of Papers</b></td>
     <td align="center"><b>Paper Management Dashboard</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/user/paper_manage.png" alt="List of Papers" width="100%"/><br></td>
+    <td><img src="assets/images/user/paper_dashboard.png" alt="Paper Management Dashboard" width="100%"/><br></td>
+  </tr>
+</table>
+<table>
+  <tr>
     <td align="center"><b>Paper Details</b></td>
     <td align="center"><b>Paper Review</b></td>
     <td align="center"><b>Paper Camera Ready</b></td>
@@ -173,8 +181,6 @@ A comprehensive Flutter application for managing academic conferences, paper sub
     <td align="center"><b>Paper Co-Authors</b></td>
   </tr>
   <tr>
-    <td><img src="assets/images/user/paper_manage.png" alt="List of Papers" width="100%"/><br></td>
-    <td><img src="assets/images/user/paper_dashboard.png" alt="Paper Management Dashboard" width="100%"/><br></td>
     <td><img src="assets/images/user/paper_details.png" alt="Paper Details" width="100%"/><br></td>
     <td><img src="assets/images/user/paper_review.png" alt="Paper Review" width="100%"/><br></td>
     <td><img src="assets/images/user/paper_camera_ready.png" alt="Paper Camera Ready" width="100%"/><br></td>
