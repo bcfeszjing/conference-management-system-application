@@ -88,18 +88,12 @@ A comprehensive Flutter application for managing academic conferences, paper sub
   <tr>
     <td align="center"><b>List of Members</b></td>
     <td align="center"><b>Member Details</b></td>
-  </tr>
-  <tr>
-    <td><img src="assets/images/admin/member_manage.png" alt="List of Members" width="100%"/><br></td>
-    <td><img src="assets/images/admin/member_details.png" alt="Member Details" width="100%"/><br></td>
-  </tr>
-</table>
-<table>
-  <tr>
     <td align="center"><b>List of Reviewer</b></td>
     <td align="center"><b>Reviewer Details</b></td>
   </tr>
   <tr>
+    <td><img src="assets/images/admin/member_manage.png" alt="List of Members" width="100%"/><br></td>
+    <td><img src="assets/images/admin/member_details.png" alt="Member Details" width="100%"/><br></td>
     <td><img src="assets/images/admin/reviewer_manage.png" alt="List of Members" width="100%"/><br></td>
     <td><img src="assets/images/admin/reviewer_details.png" alt="Reviewer Details" width="100%"/><br></td>
   </tr>
@@ -139,6 +133,91 @@ A comprehensive Flutter application for managing academic conferences, paper sub
   </tr>
 </table>
 
+### User
+<table>
+  <tr>
+    <td align="center"><b>User Login</b></td>
+    <td align="center"><b>User Signup</b></td>
+    <td align="center"><b>Reset Password</b></td>
+    <td align="center"><b>User Side Menu</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/user/user_login.png" alt="User Login" width="100%"/><br></td>
+    <td><img src="assets/images/user/user_signup.png" alt="User Signup" width="100%"/><br></td>
+    <td><img src="assets/images/user/reset_password.png" alt="Reset Password" width="100%"/><br></td>
+    <td><img src="assets/images/user/user_sidemenu.png" alt="User Side Menu" width="100%"/><br></td>
+  </tr>
+</table>
+
+### View News
+<table>
+  <tr>
+    <td align="center"><b>List of News</b></td>
+    <td align="center"><b>Add News</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/user/news_manage.png" alt="List of News" width="100%"/><br></td>
+    <td><img src="assets/images/user/news_details.png" alt="News Details" width="100%"/><br></td>
+  </tr>
+</table>
+
+### Manage Papers
+<table>
+  <tr>
+    <td align="center"><b>List of Papers</b></td>
+    <td align="center"><b>Paper Management Dashboard</b></td>
+    <td align="center"><b>Paper Details</b></td>
+    <td align="center"><b>Paper Review</b></td>
+    <td align="center"><b>Paper Camera Ready</b></td>
+    <td align="center"><b>Paper Payment</b></td>
+    <td align="center"><b>Paper Co-Authors</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/user/paper_manage.png" alt="List of Papers" width="100%"/><br></td>
+    <td><img src="assets/images/user/paper_dashboard.png" alt="Paper Management Dashboard" width="100%"/><br></td>
+    <td><img src="assets/images/user/paper_details.png" alt="Paper Details" width="100%"/><br></td>
+    <td><img src="assets/images/user/paper_review.png" alt="Paper Review" width="100%"/><br></td>
+    <td><img src="assets/images/user/paper_camera_ready.png" alt="Paper Camera Ready" width="100%"/><br></td>
+    <td><img src="assets/images/user/paper_payment.png" alt="Paper Payment" width="100%"/><br></td>
+    <td><img src="assets/images/user/paper_coauthor.png" alt="Paper Co-Authors" width="100%"/><br></td>
+  </tr>
+</table>
+
+### Manage Review
+<table>
+  <tr>
+    <td align="center"><b>List of Review</b></td>
+    <td align="center"><b>Review Details</b></td>
+    <td align="center"><b>Review Rubrics</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/user/reviewer_manage.png" alt="List of Review" width="100%"/><br></td>
+    <td><img src="assets/images/user/reviewer_review_paper.png" alt="Review Details" width="100%"/><br></td>
+    <td><img src="assets/images/user/reviewer_review_rubrics.png" alt="Review Rubrics" width="100%"/><br></td>>
+  </tr>
+</table>
+
+### Manage Messages
+<table>
+  <tr>
+    <td align="center"><b>List of Messages</b></td>
+    <td align="center"><b>Messages Details</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/user/messages_manage.png" alt="List of Messages" width="100%"/><br></td>
+    <td><img src="assets/images/user/messages_details.png" alt="Messages Details" width="100%"/><br></td>
+  </tr>
+</table>
+
+### Manage Profile
+<table>
+  <tr>
+    <td align="center"><b>User Profile</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/user/profile_manage.png" alt="User Profile" width="100%"/><br></td>
+  </tr>
+</table>
 
 ## Features
 
