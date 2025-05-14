@@ -60,7 +60,7 @@ A comprehensive Flutter application for managing academic conferences, paper sub
     <td align="center"><b>Manage Paper Dashboard</b></td>
   </tr>
   <tr>
-    <td><img src="assets/images/admin/payment_manage.png" alt="List of Papers" width="100%"/><br></td>
+    <td><img src="assets/images/admin/paper_manage.png" alt="List of Papers" width="100%"/><br></td>
     <td><img src="assets/images/admin/paper_manage_dashboard.png" alt="Manage Paper Dashboard" width="100%"/><br></td>
   </tr>
 </table>
