@@ -317,12 +317,11 @@ lib/
 
 ## Contact
 
-Your Name - [@yourusername](https://twitter.com/yourusername) - email@example.com
+Your Name - Tan Luck PhaNG - bcfeszjing@gmail.com
 
-Project Link: [https://github.com/yourusername/conference-management-system](https://github.com/yourusername/conference-management-system)
+Project Link: [https://github.com/bcfeszjing/conference-management-system-application](https://github.com/bcfeszjing/conference-management-system-application)
 
 ## Acknowledgements
 
 - [Flutter](https://flutter.dev/)
 - [Material Design](https://material.io/)
-- [Any other libraries or resources used]
