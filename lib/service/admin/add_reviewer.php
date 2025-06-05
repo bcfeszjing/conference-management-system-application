@@ -3,7 +3,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 // Include the database connection helper
-require_once __DIR__ . '/../config/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/service/config/db_connect.php';
 
 // Get database connection
 $conn = getDbConnection();
@@ -75,9 +75,78 @@ try {
     
     if ($stmt->execute()) {
         // Send email to reviewer with password
-        // Add your email sending code here
+        $to = $user_email;
+        $subject = "Reviewer Account Registration - Conference Management System";
         
-        echo json_encode(['success' => true, 'message' => 'Reviewer added successfully']);
+        // Get the conference name from the database
+        $conf_query = "SELECT conf_name FROM tbl_conferences WHERE conf_status = 'Active' LIMIT 1";
+        $conf_result = $conn->query($conf_query);
+        $conf_name = "Conference Management System";
+        if ($conf_result && $conf_result->num_rows > 0) {
+            $conf_row = $conf_result->fetch_assoc();
+            $conf_name = $conf_row['conf_name'];
+        }
+        
+        // Build the email message
+        $message = "
+        <html>
+        <head>
+            <title>Reviewer Account Created</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #ffc107; color: white; padding: 10px 20px; border-radius: 5px 5px 0 0; }
+                .content { border: 1px solid #ddd; border-top: none; padding: 20px; border-radius: 0 0 5px 5px; }
+                .password-box { background-color: #f8f8f8; border: 1px solid #ddd; padding: 10px; margin: 15px 0; text-align: center; }
+                .footer { margin-top: 20px; font-size: 12px; color: #777; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2>Welcome to $conf_name!</h2>
+                </div>
+                <div class='content'>
+                    <p>Dear $user_title $user_name,</p>
+                    
+                    <p>You have been registered as a reviewer in our Conference Management System. Your account has been created with the following details:</p>
+                    
+                    <ul>
+                        <li><strong>Email:</strong> $user_email</li>
+                        <li><strong>Your temporary password:</strong></li>
+                    </ul>
+                    
+                    <div class='password-box'>
+                        <h3>$user_password</h3>
+                    </div>
+                    
+                    <p>Please use these credentials to log in to the system. We recommend changing your password after your first login.</p>
+                    
+                    <p>If you have any questions or need assistance, please contact the conference administrator.</p>
+                    
+                    <p>Thank you for your contribution to our peer review process.</p>
+                    
+                    <p>Best regards,<br>Conference Management Team</p>
+                </div>
+                <div class='footer'>
+                    <p>This is an automated message. Please do not reply to this email.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        // Set email headers
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: noreply@cmsa.digital" . "\r\n";
+        
+        // Send the email
+        if(mail($to, $subject, $message, $headers)) {
+            echo json_encode(['success' => true, 'message' => 'Reviewer added successfully and welcome email sent']);
+        } else {
+            echo json_encode(['success' => true, 'message' => 'Reviewer added successfully but failed to send welcome email']);
+        }
     } else {
         throw new Exception($stmt->error);
     }

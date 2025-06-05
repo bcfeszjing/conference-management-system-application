@@ -432,7 +432,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
                     CircleAvatar(
                       radius: 60,
                       backgroundImage: currentProfileImage != null
-                          ? NetworkImage(currentProfileImage! + '?v=${DateTime.now().millisecondsSinceEpoch}')
+                          ? NetworkImage(currentProfileImage!)
                           : const AssetImage('assets/images/NullProfilePicture.png')
                               as ImageProvider,
                     ),

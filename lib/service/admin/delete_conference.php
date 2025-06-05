@@ -1,9 +1,18 @@
 <?php
+// Handle CORS
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Return early if it's a preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
+
 header('Content-Type: application/json');
 
 // Include the database connection helper
-require_once __DIR__ . '/../config/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/service/config/db_connect.php';
 
 // Get database connection
 $conn = getDbConnection();

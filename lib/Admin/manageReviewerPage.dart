@@ -586,7 +586,7 @@ class _ManageReviewerPageState extends State<ManageReviewerPage> {
                                       CircleAvatar(
                                         radius: 30,
                                         backgroundImage: reviewer['profile_image'] != null
-                                            ? NetworkImage(reviewer['profile_image'] + '?v=${DateTime.now().millisecondsSinceEpoch}')
+                                            ? NetworkImage(reviewer['profile_image'])
                                             : AssetImage('assets/images/NullProfilePicture.png')
                                                 as ImageProvider,
                                       ),
@@ -757,6 +757,11 @@ class _ManageReviewerPageState extends State<ManageReviewerPage> {
                   isActive: true,
                   onTap: () {
                     Navigator.pop(context);
+                    setState(() {
+                      _allReviewers = [];
+                      _filteredReviewers = [];
+                    });
+                    _fetchReviewers();
                   },
                 ),
                 _buildDrawerItem(

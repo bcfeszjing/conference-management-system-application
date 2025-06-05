@@ -1,10 +1,17 @@
-
 <?php
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 // Include the database connection helper
-require_once __DIR__ . '/../config/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/service/config/db_connect.php';
 
 // Get database connection
 $conn = getDbConnection();
@@ -35,11 +42,8 @@ if (isset($_GET['user_id'])) {
         
         // Construct full URL for profile image if it exists
         if (!empty($row['profile_image'])) {
-            // Check if the profile image already has a full URL
-            if (strpos($row['profile_image'], 'http') !== 0) {
-                // Always use .jpg as the extension regardless of original file
-                $row['profile_image'] = 'https://cmsa.digital/assets/profiles/profile_pics/' . $row['profile_image'] . '.jpg';
-            }
+            // Use the image proxy instead of direct URL
+            $row['profile_image'] = 'https://cmsa.digital/admin/image_proxy.php?path=' . $row['profile_image'] . '&t=' . time();
         }
         
         echo json_encode([

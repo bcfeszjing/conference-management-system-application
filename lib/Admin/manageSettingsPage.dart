@@ -303,6 +303,9 @@ class _ManageSettingsPageState extends State<ManageSettingsPage> {
                   isActive: true,
                   onTap: () {
                     Navigator.pop(context);
+                    setState(() {
+                      // Refresh the settings page
+                    });
                   },
                 ),
                 Divider(),

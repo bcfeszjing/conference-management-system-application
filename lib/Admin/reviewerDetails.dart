@@ -206,15 +206,8 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
       // Handle web platform download
       if (kIsWeb) {
         try {
-          // Create a download anchor and trigger click
-          html.AnchorElement anchor = html.AnchorElement(href: downloadUrl);
-          anchor.download = fileName; // Set download attribute
-          anchor.style.display = 'none'; // Hide the element
-          
-          // Add to document body, trigger click, and remove
-          html.document.body?.children.add(anchor);
-          anchor.click();
-          html.document.body?.children.remove(anchor);
+          // Open in a new tab instead of using download attribute
+          html.window.open(downloadUrl, '_blank');
           
           setState(() {
             isDownloadingCV = false;
@@ -223,7 +216,7 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
           if (!mounted) return;
           
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Download started. Check your browser downloads folder.')),
+            SnackBar(content: Text('CV opened in a new tab')),
           );
           
           return;
@@ -645,7 +638,7 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
                               radius: 40,
                               backgroundColor: Color(0xFFffc107).withOpacity(0.2),
                               backgroundImage: reviewerDetails['profile_image'] != null
-                                  ? NetworkImage(reviewerDetails['profile_image'] + '?v=${DateTime.now().millisecondsSinceEpoch}')
+                                  ? NetworkImage(reviewerDetails['profile_image'])
                                   : AssetImage('assets/images/NullProfilePicture.png')
                                       as ImageProvider,
                             ),
@@ -829,54 +822,110 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
                         
                         SizedBox(height: 16),
                         
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: _resetPassword,
-                                icon: Icon(Icons.lock_reset, size: 18, color: Colors.white),
-                                label: Text(
-                                  'Reset Password',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                        // Use LayoutBuilder to make the buttons responsive
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            // For narrow screens, stack buttons vertically
+                            if (constraints.maxWidth < 500) {
+                              return Column(
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: _resetPassword,
+                                    icon: Icon(Icons.lock_reset, size: 18, color: Colors.white),
+                                    label: Text(
+                                      'Reset Password',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0xFF5c6bc0),
+                                      padding: EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      minimumSize: Size(double.infinity, 50),
+                                    ),
                                   ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF5c6bc0),
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                  SizedBox(height: 16),
+                                  ElevatedButton.icon(
+                                    onPressed: _removeAccount,
+                                    icon: Icon(Icons.delete_outline, size: 18, color: Colors.white),
+                                    label: Text(
+                                      'Remove Account',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      padding: EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      minimumSize: Size(double.infinity, 50),
+                                    ),
                                   ),
-                                  minimumSize: Size(double.infinity, 50),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: _removeAccount,
-                                icon: Icon(Icons.delete_outline, size: 18, color: Colors.white),
-                                label: Text(
-                                  'Remove Account',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                ],
+                              );
+                            } 
+                            // For wider screens, keep buttons side by side
+                            else {
+                              return Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: _resetPassword,
+                                      icon: Icon(Icons.lock_reset, size: 18, color: Colors.white),
+                                      label: Text(
+                                        'Reset Password',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xFF5c6bc0),
+                                        padding: EdgeInsets.symmetric(vertical: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        minimumSize: Size(double.infinity, 50),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                  SizedBox(width: 16),
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: _removeAccount,
+                                      icon: Icon(Icons.delete_outline, size: 18, color: Colors.white),
+                                      label: Text(
+                                        'Remove Account',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                        padding: EdgeInsets.symmetric(vertical: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        minimumSize: Size(double.infinity, 50),
+                                      ),
+                                    ),
                                   ),
-                                  minimumSize: Size(double.infinity, 50),
-                                ),
-                              ),
-                            ),
-                          ],
+                                ],
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),

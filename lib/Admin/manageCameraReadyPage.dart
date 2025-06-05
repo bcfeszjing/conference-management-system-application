@@ -865,6 +865,12 @@ class _ManageCameraReadyPageState extends State<ManageCameraReadyPage> {
                   isActive: true,
                   onTap: () {
                     Navigator.pop(context);
+                    setState(() {
+                      _allPapers = [];
+                      _filteredPapers = [];
+                      _isLoading = true;
+                    });
+                    _fetchPapers();
                   },
                 ),
                 _buildDrawerItem(

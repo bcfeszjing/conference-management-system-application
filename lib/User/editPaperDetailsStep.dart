@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:CMSapplication/User/paperDetailsStep.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http_parser/http_parser.dart';
 
 class EditPaperDetailsStep extends StatefulWidget {
   final String paperId;
@@ -24,10 +26,17 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
   final TextEditingController abstractController = TextEditingController();
   final TextEditingController keywordsController = TextEditingController();
   
+  // For mobile platforms
   File? noAffFile;
-  String? noAffFileName;
   File? withAffFile;
+  
+  // For web platform
+  List<int>? noAffBytes;
+  List<int>? withAffBytes;
+  
+  String? noAffFileName;
   String? withAffFileName;
+  bool isUploadingFiles = false;
 
   @override
   void initState() {
@@ -64,22 +73,57 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
   }
 
   Future<void> pickFile(bool isNoAff) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['doc', 'docx'],
-      allowMultiple: false,
-    );
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['doc', 'docx'],
+        allowMultiple: false,
+        withData: kIsWeb, // Important for web to get file bytes
+      );
 
-    if (result != null) {
-      setState(() {
-        if (isNoAff) {
-          noAffFile = File(result.files.single.path!);
-          noAffFileName = result.files.single.name.toUpperCase();
-        } else {
-          withAffFile = File(result.files.single.path!);
-          withAffFileName = result.files.single.name.toUpperCase();
-        }
-      });
+      if (result != null) {
+        setState(() {
+          if (isNoAff) {
+            noAffFileName = result.files.single.name;
+            if (kIsWeb) {
+              // For web, store bytes
+              noAffBytes = result.files.single.bytes;
+              noAffFile = null;
+            } else {
+              // For mobile, store file
+              noAffFile = File(result.files.single.path!);
+              noAffBytes = null;
+            }
+          } else {
+            withAffFileName = result.files.single.name;
+            if (kIsWeb) {
+              // For web, store bytes
+              withAffBytes = result.files.single.bytes;
+              withAffFile = null;
+            } else {
+              // For mobile, store file
+              withAffFile = File(result.files.single.path!);
+              withAffBytes = null;
+            }
+          }
+        });
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('File selected: ${result.files.single.name}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error picking file: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error selecting file: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -87,52 +131,151 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/edit_paperDetailsStep.php'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'paper_id': widget.paperId,
-          'paper_fields': selectedFields.join(', '),
-          'paper_title': titleController.text,
-          'paper_abstract': abstractController.text,
-          'paper_keywords': keywordsController.text,
-        }),
-      );
+      // Show loading indicator
+      setState(() {
+        isLoading = true;
+      });
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['success']) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Paper updated successfully'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          // Pop and return true to indicate success and trigger refresh
-          Navigator.pop(context, true);
+      // First, update paper details via JSON request
+      final detailsRequest = http.Request('POST', Uri.parse('https://cmsa.digital/user/edit_paperDetailsStep.php'));
+      
+      // Set headers
+      detailsRequest.headers.addAll({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+      
+      // Set body
+      detailsRequest.body = json.encode({
+        'paper_id': widget.paperId,
+        'paper_fields': selectedFields.join(', '),
+        'paper_title': titleController.text,
+        'paper_abstract': abstractController.text,
+        'paper_keywords': keywordsController.text,
+      });
+      
+      // Send the request
+      final streamedResponse = await detailsRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode != 200 || !json.decode(response.body)['success']) {
+        throw Exception('Failed to update paper details: ${response.body}');
+      }
+      
+      // Now handle file uploads if files were selected
+      bool hasFilesToUpload = false;
+      
+      if (kIsWeb) {
+        hasFilesToUpload = noAffBytes != null || withAffBytes != null;
+      } else {
+        hasFilesToUpload = noAffFile != null || withAffFile != null;
+      }
+      
+      if (hasFilesToUpload) {
+        setState(() {
+          isUploadingFiles = true;
+        });
+        
+        // Create multipart request for file uploads
+        var uploadRequest = http.MultipartRequest(
+          'POST',
+          Uri.parse('https://cmsa.digital/user/upload_paperFiles.php'),
+        );
+        
+        // Add paper ID
+        uploadRequest.fields['paper_id'] = widget.paperId;
+        
+        // Add files based on platform
+        if (kIsWeb) {
+          // Web implementation
+          if (noAffBytes != null && noAffFileName != null) {
+            uploadRequest.files.add(http.MultipartFile.fromBytes(
+              'paper_file_no_aff',
+              noAffBytes!,
+              filename: noAffFileName,
+              contentType: MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document'),
+            ));
+          }
           
-          // Wait a moment to ensure the previous page has time to handle the result
-          await Future.delayed(const Duration(milliseconds: 100));
-          
-          // Explicitly call fetchPaperDetails on the previous page
-          if (mounted && context.mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PaperDetailsStep(paperId: widget.paperId),
-              ),
-            );
+          if (withAffBytes != null && withAffFileName != null) {
+            uploadRequest.files.add(http.MultipartFile.fromBytes(
+              'paper_file_aff',
+              withAffBytes!,
+              filename: withAffFileName,
+              contentType: MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document'),
+            ));
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${data['message']}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          // Mobile implementation
+          if (noAffFile != null) {
+            uploadRequest.files.add(await http.MultipartFile.fromPath(
+              'paper_file_no_aff',
+              noAffFile!.path,
+              filename: noAffFileName,
+              contentType: MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document'),
+            ));
+          }
+          
+          if (withAffFile != null) {
+            uploadRequest.files.add(await http.MultipartFile.fromPath(
+              'paper_file_aff',
+              withAffFile!.path,
+              filename: withAffFileName,
+              contentType: MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document'),
+            ));
+          }
+        }
+        
+        // Send the file upload request
+        final uploadResponse = await uploadRequest.send();
+        final uploadResult = await http.Response.fromStream(uploadResponse);
+        
+        if (uploadResponse.statusCode != 200) {
+          throw Exception('Failed to upload files: ${uploadResult.body}');
+        }
+        
+        final uploadData = json.decode(uploadResult.body);
+        if (!uploadData['success']) {
+          throw Exception('File upload error: ${uploadData['message']}');
         }
       }
+
+      // Hide loading indicator
+      setState(() {
+        isLoading = false;
+        isUploadingFiles = false;
+      });
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Paper updated successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+      // Pop and return true to indicate success and trigger refresh
+      Navigator.pop(context, true);
+      
+      // Wait a moment to ensure the previous page has time to handle the result
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      // Explicitly call fetchPaperDetails on the previous page
+      if (mounted && context.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaperDetailsStep(paperId: widget.paperId),
+          ),
+        );
+      }
     } catch (e) {
+      // Hide loading indicator if still showing
+      setState(() {
+        isLoading = false;
+        isUploadingFiles = false;
+      });
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: $e'),
@@ -600,7 +743,7 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
                     ],
                   ),
                   child: ElevatedButton.icon(
-                    onPressed: updatePaper,
+                    onPressed: isLoading || isUploadingFiles ? null : updatePaper,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -609,10 +752,23 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    icon: const Icon(Icons.save),
-                    label: const Text(
-                      'Update Paper',
-                      style: TextStyle(
+                    icon: isLoading || isUploadingFiles 
+                      ? SizedBox(
+                          width: 20, 
+                          height: 20, 
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          )
+                        ) 
+                      : const Icon(Icons.save),
+                    label: Text(
+                      isLoading 
+                        ? 'Updating...' 
+                        : isUploadingFiles 
+                          ? 'Uploading Files...' 
+                          : 'Update Paper',
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),

@@ -14,7 +14,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/includes/PHPMailer/src/SMTP.php';
 
 // Database connection
 // Include the database connection helper
-require_once __DIR__ . '/../config/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/service/config/db_connect.php';
 
 // Get database connection
 $conn = getDbConnection();

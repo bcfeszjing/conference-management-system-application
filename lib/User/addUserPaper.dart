@@ -44,6 +44,8 @@ class _AddUserPaperState extends State<AddUserPaper> {
   String? _fieldsError;
   String? _filesError;
   bool _isNoticeExpanded = false;
+  Uint8List? withoutAuthorsBytes;
+  Uint8List? withAuthorsBytes;
 
   @override
   void initState() {
@@ -104,12 +106,15 @@ class _AddUserPaperState extends State<AddUserPaper> {
           
           setState(() {
             if (isWithAuthors) {
-              // For web, we can't create a File object, just store the name
+              // For web, we can't create a File object, just store the name and bytes
               withAuthorsFile = result.files.single.name;
               // Store the bytes for later upload
-              // This needs to be handled in _submitPaper for web
+              withAuthorsFileObj = null; // Clear the File object as it's not applicable for web
+              withAuthorsBytes = result.files.single.bytes; // Store the bytes
             } else {
               withoutAuthorsFile = result.files.single.name;
+              withoutAuthorsFileObj = null; // Clear the File object as it's not applicable for web
+              withoutAuthorsBytes = result.files.single.bytes; // Store the bytes
             }
           });
           
@@ -304,19 +309,41 @@ class _AddUserPaperState extends State<AddUserPaper> {
       request.fields['paper_keywords'] = keywords!;
       request.fields['paper_fields'] = selectedFields.join(',');
       
-      // Add files
-      if (withoutAuthorsFileObj != null) {
-        request.files.add(await http.MultipartFile.fromPath(
-          'paper_file_no_aff', 
-          withoutAuthorsFileObj!.path,
-        ));
-      }
-
-      if (withAuthorsFileObj != null) {
-        request.files.add(await http.MultipartFile.fromPath(
-          'paper_file_aff', 
-          withAuthorsFileObj!.path,
-        ));
+      // Add files based on platform
+      if (kIsWeb) {
+        // Web implementation - using bytes
+        if (withoutAuthorsBytes != null) {
+          request.files.add(http.MultipartFile.fromBytes(
+            'paper_file_no_aff',
+            withoutAuthorsBytes!,
+            filename: withoutAuthorsFile,
+          ));
+        }
+  
+        if (withAuthorsBytes != null) {
+          request.files.add(http.MultipartFile.fromBytes(
+            'paper_file_aff',
+            withAuthorsBytes!,
+            filename: withAuthorsFile,
+          ));
+        }
+      } else {
+        // Mobile implementation - using file paths
+        if (withoutAuthorsFileObj != null) {
+          request.files.add(await http.MultipartFile.fromPath(
+            'paper_file_no_aff', 
+            withoutAuthorsFileObj!.path,
+            filename: withoutAuthorsFile,
+          ));
+        }
+  
+        if (withAuthorsFileObj != null) {
+          request.files.add(await http.MultipartFile.fromPath(
+            'paper_file_aff', 
+            withAuthorsFileObj!.path,
+            filename: withAuthorsFile,
+          ));
+        }
       }
 
       // Send the request
@@ -396,11 +423,22 @@ class _AddUserPaperState extends State<AddUserPaper> {
   }
 
   bool _validateFiles() {
-    if (withoutAuthorsFile == null || withAuthorsFile == null) {
-      setState(() {
-        _filesError = 'Please upload both paper files';
-      });
-      return false;
+    if (kIsWeb) {
+      // For web, check if bytes are available
+      if (withoutAuthorsBytes == null || withAuthorsBytes == null) {
+        setState(() {
+          _filesError = 'Please upload both paper files';
+        });
+        return false;
+      }
+    } else {
+      // For mobile, check file objects
+      if (withoutAuthorsFileObj == null || withAuthorsFileObj == null) {
+        setState(() {
+          _filesError = 'Please upload both paper files';
+        });
+        return false;
+      }
     }
     setState(() {
       _filesError = null;

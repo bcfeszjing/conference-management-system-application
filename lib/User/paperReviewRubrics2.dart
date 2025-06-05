@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:CMSapplication/User/reviewPaperDetails.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
+import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 class PaperReviewRubrics2 extends StatefulWidget {
   final String reviewId;
@@ -30,9 +32,14 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
   bool _isBestPaper = false;
   bool _isSubmitting = false;
   
-  // File upload variables
-  PlatformFile? _selectedFile;
+  // File upload variables for web and mobile
   String? _uploadedFileName;
+  
+  // For mobile platforms
+  File? _selectedFileObj;
+  
+  // For web platform
+  Uint8List? _selectedFileBytes;
   
   bool _reviewerRemarksError = false;
   bool _confRemarksError = false;
@@ -74,10 +81,12 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
 
   Future<void> _pickFile() async {
     try {
+      // For mobile platforms, we need to ensure we get a proper file path
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['docx'],
-        withData: true, // Important: Get file bytes for web compatibility
+        withData: true, // Always get bytes for both platforms to be safe
+        allowCompression: false,
       );
 
       if (result != null && result.files.isNotEmpty) {
@@ -107,9 +116,33 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
           return;
         }
 
+        // Log file details for debugging
+        print('File picked: ${result.files.single.name}');
+        print('File size: ${result.files.single.size} bytes');
+        print('Has bytes: ${result.files.single.bytes != null}');
+        print('Has path: ${result.files.single.path != null}');
+        if (result.files.single.path != null) {
+          print('Path: ${result.files.single.path}');
+        }
+
+        // Always store the file name and bytes
         setState(() {
-          _selectedFile = result.files.single;
           _uploadedFileName = result.files.single.name;
+          _selectedFileBytes = result.files.single.bytes;
+          
+          // Only try to create File object on mobile if path is available
+          if (!kIsWeb && result.files.single.path != null) {
+            try {
+              _selectedFileObj = File(result.files.single.path!);
+              print('File object created successfully');
+            } catch (e) {
+              print('Error creating File object: $e');
+              // Don't throw here, we'll use bytes as fallback
+              _selectedFileObj = null;
+            }
+          } else {
+            _selectedFileObj = null;
+          }
         });
         
         // Show confirmation snackbar
@@ -217,34 +250,33 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
       request.fields['review_confremarks'] = _confRemarksController.text.trim();
       request.fields['rev_bestpaper'] = _isBestPaper ? 'Yes' : 'No';
 
-      // Add file if selected
-      if (_selectedFile != null) {
+      // Add file if selected - always try to use bytes first for compatibility
+      if (_uploadedFileName != null && _selectedFileBytes != null) {
+        // Use bytes for file upload (works on both web and mobile)
+        request.files.add(http.MultipartFile.fromBytes(
+          'reviewed_file',
+          _selectedFileBytes!,
+          filename: _uploadedFileName,
+          contentType: MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document'),
+        ));
+        print('Uploading file using bytes: $_uploadedFileName');
+      } else if (!kIsWeb && _selectedFileObj != null && _uploadedFileName != null) {
+        // Fallback to path for mobile only if bytes are not available
         try {
-          if (_selectedFile!.bytes != null) {
-            // Use bytes for file upload (works on both web and mobile)
-            final file = http.MultipartFile.fromBytes(
-              'reviewed_file',
-              _selectedFile!.bytes!,
-              filename: _selectedFile!.name,
-            );
-            request.files.add(file);
-            print('Uploading file: ${_selectedFile!.name} (${_selectedFile!.size} bytes)');
-          } else if (!kIsWeb && _selectedFile!.path != null) {
-            // Fallback to path for mobile only if bytes are somehow not available
-            final file = await http.MultipartFile.fromPath(
-              'reviewed_file',
-              _selectedFile!.path!,
-              filename: _selectedFile!.name,
-            );
-            request.files.add(file);
-            print('Uploading file from path: ${_selectedFile!.path}');
-          } else {
-            throw Exception('Missing file data for upload');
-          }
+          request.files.add(await http.MultipartFile.fromPath(
+            'reviewed_file',
+            _selectedFileObj!.path,
+            filename: _uploadedFileName,
+            contentType: MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document'),
+          ));
+          print('Uploading file using path: ${_selectedFileObj!.path}');
         } catch (e) {
-          print('Error preparing file upload: $e');
+          print('Error creating MultipartFile from path: $e');
           throw Exception('Failed to prepare file for upload: $e');
         }
+      } else if (_uploadedFileName != null) {
+        print('No valid file data available for upload');
+        throw Exception('Missing file data for upload');
       }
 
       // Send request with timeout
@@ -646,7 +678,8 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
                                     icon: Icon(Icons.clear, color: Colors.red[400]),
                                     onPressed: () {
                                       setState(() {
-                                        _selectedFile = null;
+                                        _selectedFileObj = null;
+                                        _selectedFileBytes = null;
                                         _uploadedFileName = null;
                                       });
                                     },
@@ -661,8 +694,8 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
                             children: [
                               ElevatedButton.icon(
                                 onPressed: _pickFile,
-                                icon: Icon(_selectedFile != null ? Icons.change_circle : Icons.upload_file),
-                                label: Text(_selectedFile != null ? 'Change File' : 'Choose File'),
+                                icon: Icon(_uploadedFileName != null ? Icons.change_circle : Icons.upload_file),
+                                label: Text(_uploadedFileName != null ? 'Change File' : 'Choose File'),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
@@ -672,7 +705,7 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
                                   ),
                                 ),
                               ),
-                              if (_selectedFile == null) ...[
+                              if (_uploadedFileName == null) ...[
                                 SizedBox(width: 16),
                                 Expanded(
                                   child: Text(

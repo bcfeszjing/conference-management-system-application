@@ -120,6 +120,28 @@ class _AddReviewerState extends State<AddReviewer> {
 
   Future<void> submitForm() async {
     if (!_formKey.currentState!.validate()) return;
+    
+    // Additional validation for required fields
+    if (selectedTitle == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a title')),
+      );
+      return;
+    }
+    
+    if (selectedCountry == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a country')),
+      );
+      return;
+    }
+    
+    if (selectedFields.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select at least one expertise area')),
+      );
+      return;
+    }
 
     showDialog(
       context: context,
@@ -186,20 +208,36 @@ class _AddReviewerState extends State<AddReviewer> {
 
       if (jsonResponse['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Reviewer added successfully')),
+          SnackBar(
+            content: Text(jsonResponse['message']),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ManageReviewerPage()),
-        );
+        
+        // Add a slight delay before navigating back
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ManageReviewerPage()),
+          );
+        });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${jsonResponse['message']}')),
+          SnackBar(
+            content: Text('Error: ${jsonResponse['message']}'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
@@ -537,12 +575,24 @@ class _AddReviewerState extends State<AddReviewer> {
         filled: true,
         fillColor: Colors.white,
       ),
+      keyboardType: isEmail ? TextInputType.emailAddress : (hint.contains('phone') ? TextInputType.phone : TextInputType.text),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'This field is required';
         }
-        if (isEmail && !value.contains('@')) {
-          return 'Please enter a valid email';
+        if (isEmail) {
+          // Improved email validation
+          final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+          if (!emailRegex.hasMatch(value)) {
+            return 'Please enter a valid email address';
+          }
+        }
+        if (hint.contains('phone')) {
+          // Check if phone contains only numbers, spaces, dashes, plus, and parentheses
+          final phoneRegex = RegExp(r'^[0-9\s\-\+\(\)]+$');
+          if (!phoneRegex.hasMatch(value)) {
+            return 'Please enter a valid phone number';
+          }
         }
         return null;
       },

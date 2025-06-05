@@ -951,7 +951,7 @@ class _ManageUserProfilePageState extends State<ManageUserProfilePage> {
                   CircleAvatar(
                     radius: 60,
                     backgroundImage: userData?['profile_image'] != null
-                        ? NetworkImage(userData!['profile_image'] + '?v=${DateTime.now().millisecondsSinceEpoch}')
+                        ? NetworkImage(userData!['profile_image'])
                         : const AssetImage('assets/images/NullProfilePicture.png')
                             as ImageProvider,
                   ),

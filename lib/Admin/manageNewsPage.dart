@@ -553,6 +553,10 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
                   isActive: true,
                   onTap: () {
                     Navigator.pop(context);
+                    setState(() {
+                      allNews = [];
+                      filteredNews = [];
+                    });
                     fetchNews();
                   },
                 ),

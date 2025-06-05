@@ -858,8 +858,73 @@ class _PaperDetailsState extends State<PaperDetails> {
     ) ?? false;
 
     if (confirm) {
-      // Implement delete functionality
-      // TODO: Add API call to delete paper
+      try {
+        // Show loading dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Deleting paper...')
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+
+        // Make API call to delete paper
+        final response = await http.post(
+          Uri.parse('https://cmsa.digital/admin/delete_paper.php'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'paper_id': widget.paperId,
+          }),
+        );
+
+        // Close loading dialog
+        Navigator.pop(context);
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          if (data['success']) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Paper deleted successfully'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            
+            // Pop twice to go back to ManagePapersPage - once from paperDetails, once from paperDashboard
+            Navigator.of(context).pop(true); // Pop PaperDetails with refresh signal
+            Navigator.of(context).pop(true); // Pop PaperDashboard with refresh signal
+          } else {
+            throw Exception(data['error'] ?? 'Failed to delete paper');
+          }
+        } else {
+          throw Exception('Server error: ${response.statusCode}');
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

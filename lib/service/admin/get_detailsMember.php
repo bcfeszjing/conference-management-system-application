@@ -1,9 +1,17 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 // Include the database connection helper
-require_once __DIR__ . '/../config/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/service/config/db_connect.php';
 
 // Get database connection
 $conn = getDbConnection();
@@ -41,9 +49,10 @@ $data = array();
 
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-        // Format the profile image URL if it exists
+        // Format the profile image URL if it exists, using our proxy
         if (!empty($row['profile_image'])) {
-            $row['profile_image'] = 'https://cmsa.digital/assets/profiles/profile_pics/' . $row['profile_image'] . '.jpg';
+            // Use the image proxy instead of direct URL with a timestamp to prevent caching
+            $row['profile_image'] = 'https://cmsa.digital/admin/image_proxy.php?path=' . $row['profile_image'] . '&t=' . time();
         }
         $data[] = $row;
     }
@@ -65,9 +74,10 @@ if ($member_id != '') {
     
     if ($result->num_rows > 0) {
         $memberData = $result->fetch_assoc();
-        // Format the profile image URL if it exists
+        // Format the profile image URL if it exists, using our proxy
         if (!empty($memberData['profile_image'])) {
-            $memberData['profile_image'] = 'https://cmsa.digital/assets/profiles/profile_pics/' . $memberData['profile_image'] . '.jpg';
+            // Use the image proxy instead of direct URL with a timestamp to prevent caching
+            $memberData['profile_image'] = 'https://cmsa.digital/admin/image_proxy.php?path=' . $memberData['profile_image'] . '&t=' . time();
         }
         echo json_encode($memberData);
     } else {

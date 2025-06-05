@@ -3,7 +3,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 // Include the database connection helper
-require_once __DIR__ . '/../config/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/service/config/db_connect.php';
 
 // Get database connection
 $conn = getDbConnection();
@@ -156,13 +156,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Update paper status to "Pre-Camera Ready"
-    $sql = "UPDATE tbl_papers SET paper_status = 'Pre-Camera Ready' WHERE paper_id = '$paper_id'";
-    
-    if ($conn->query($sql) === TRUE) {
-        echo json_encode(['success' => true, 'message' => 'Your paper has been updated to Pre-Camera Ready status successfully.']);
+    // Check if we should maintain the current status (for Camera Ready updates)
+    if (isset($_POST['maintain_status']) && $_POST['maintain_status'] === 'true') {
+        // Get the current status from the request
+        $current_status = $conn->real_escape_string($_POST['current_status']);
+        
+        // Only update the message, not the status
+        echo json_encode(['success' => true, 'message' => 'Your paper details have been updated successfully.']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error updating paper status: ' . $conn->error]);
+        // Update paper status to "Pre-Camera Ready"
+        $sql = "UPDATE tbl_papers SET paper_status = 'Pre-Camera Ready' WHERE paper_id = '$paper_id'";
+        
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(['success' => true, 'message' => 'Your paper has been updated to Pre-Camera Ready status successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error updating paper status: ' . $conn->error]);
+        }
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);

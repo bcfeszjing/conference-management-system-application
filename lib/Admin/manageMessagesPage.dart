@@ -86,9 +86,11 @@ class _ManageMessagesPageState extends State<ManageMessagesPage> {
       _filteredMessages = _allMessages.where((message) {
         switch (_selectedSearchBy) {
           case 'Name':
-            return message['user_name'].toString().toLowerCase().contains(searchTerm);
+            return message['user_name'] != null && 
+                   message['user_name'].toString().toLowerCase().contains(searchTerm);
           case 'Title':
-            return message['message_title'].toString().toLowerCase().contains(searchTerm);
+            return message['message_title'] != null && 
+                   message['message_title'].toString().toLowerCase().contains(searchTerm);
           default:
             return false;
         }
@@ -446,7 +448,7 @@ class _ManageMessagesPageState extends State<ManageMessagesPage> {
                                           SizedBox(width: 12),
                                           Expanded(
                                             child: Text(
-                                              message['user_name'],
+                                              message['user_name'] ?? 'Unknown User',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -467,7 +469,7 @@ class _ManageMessagesPageState extends State<ManageMessagesPage> {
                                               borderRadius: BorderRadius.circular(16),
                                             ),
                                             child: Text(
-                                              message['message_status'],
+                                              message['message_status'] ?? 'Pending',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
@@ -484,7 +486,7 @@ class _ManageMessagesPageState extends State<ManageMessagesPage> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            message['message_title'],
+                                            message['message_title'] ?? 'No Title',
                                             style: TextStyle(
                                               color: Color(0xFFcc9600),
                                               fontSize: 18,
@@ -493,7 +495,9 @@ class _ManageMessagesPageState extends State<ManageMessagesPage> {
                                           ),
                                           SizedBox(height: 8),
                                           Text(
-                                            '${message['message_content'].substring(0, message['message_content'].length > 100 ? 100 : message['message_content'].length)}...',
+                                            message['message_content'] != null 
+                                              ? '${message['message_content'].substring(0, message['message_content'].length > 100 ? 100 : message['message_content'].length)}...'
+                                              : 'No content',
                                             style: TextStyle(
                                               color: Colors.black87,
                                               fontSize: 15,

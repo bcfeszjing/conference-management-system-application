@@ -5,7 +5,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
 // Include the database connection helper
-require_once __DIR__ . '/../config/db_connect.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/lib/service/config/db_connect.php';
 
 // Get database connection
 $conn = getDbConnection();

@@ -212,7 +212,7 @@ class _MemberDetailsState extends State<MemberDetails> {
                               radius: 40,
                               backgroundColor: Color(0xFFffc107).withOpacity(0.2),
                               backgroundImage: memberDetails['profile_image'] != null
-                                  ? NetworkImage(memberDetails['profile_image'] + '?v=${DateTime.now().millisecondsSinceEpoch}')
+                                  ? NetworkImage(memberDetails['profile_image'])
                                   : AssetImage('assets/images/NullProfilePicture.png')
                                       as ImageProvider,
                             ),
@@ -318,54 +318,109 @@ class _MemberDetailsState extends State<MemberDetails> {
                   // Action Buttons
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: Icon(Icons.lock_reset, size: 18),
-                            label: Text(
-                              'Reset Password',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        // For narrow screens, stack buttons vertically
+                        if (constraints.maxWidth < 500) {
+                          return Column(
+                            children: [
+                              ElevatedButton.icon(
+                                icon: Icon(Icons.lock_reset, size: 18),
+                                label: Text(
+                                  'Reset Password',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                onPressed: _resetPassword,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFFffc107),
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  minimumSize: Size(double.infinity, 50),
+                                ),
                               ),
-                            ),
-                            onPressed: _resetPassword,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFffc107),
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                              SizedBox(height: 16),
+                              ElevatedButton.icon(
+                                icon: Icon(Icons.delete_outline, size: 18),
+                                label: Text(
+                                  'Remove Account',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                onPressed: _removeAccount,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  minimumSize: Size(double.infinity, 50),
+                                ),
                               ),
-                              minimumSize: Size(double.infinity, 50),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: Icon(Icons.delete_outline, size: 18),
-                            label: Text(
-                              'Remove Account',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                            ],
+                          );
+                        } 
+                        // For wider screens, keep buttons side by side
+                        else {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  icon: Icon(Icons.lock_reset, size: 18),
+                                  label: Text(
+                                    'Reset Password',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  onPressed: _resetPassword,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFffc107),
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    minimumSize: Size(double.infinity, 50),
+                                  ),
+                                ),
                               ),
-                            ),
-                            onPressed: _removeAccount,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  icon: Icon(Icons.delete_outline, size: 18),
+                                  label: Text(
+                                    'Remove Account',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  onPressed: _removeAccount,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    minimumSize: Size(double.infinity, 50),
+                                  ),
+                                ),
                               ),
-                              minimumSize: Size(double.infinity, 50),
-                            ),
-                          ),
-                        ),
-                      ],
+                            ],
+                          );
+                        }
+                      },
                     ),
                   ),
                   SizedBox(height: 16),

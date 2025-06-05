@@ -539,6 +539,9 @@ class _PaperCameraReadyUploadState extends State<PaperCameraReadyUpload> {
 
       // Add common fields
       request.fields['paper_id'] = widget.paperId;
+      
+      // Add current paper status to maintain it when updating
+      request.fields['current_status'] = paperData?['paper_status'] ?? '';
 
       // Add optional fields for Camera Ready status
       if (paperData?['paper_status'] == 'Camera Ready') {
@@ -546,6 +549,7 @@ class _PaperCameraReadyUploadState extends State<PaperCameraReadyUpload> {
         request.fields['paper_abstract'] = abstractController.text;
         request.fields['paper_keywords'] = keywordsController.text;
         request.fields['paper_pageno'] = pageNoController.text;
+        request.fields['maintain_status'] = 'true'; // Add flag to maintain Camera Ready status
       }
 
       // Add camera ready file if selected
