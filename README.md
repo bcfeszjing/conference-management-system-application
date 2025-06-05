@@ -317,7 +317,7 @@ lib/
 
 ## Contact
 
-Name - Tan Luck Phang - bcfeszjing@gmail.com
+Name - Evan Tan - bcfeszjing@gmail.com
 
 Project Link: [https://github.com/bcfeszjing/conference-management-system-application](https://github.com/bcfeszjing/conference-management-system-application)
 
