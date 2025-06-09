@@ -8,6 +8,7 @@ import 'package:CMSapplication/services/user_state.dart';
 import 'manageUserProfilePage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
+import '../config/app_config.dart';
 
 class EditUserProfile extends StatefulWidget {
   const EditUserProfile({Key? key}) : super(key: key);
@@ -84,7 +85,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
   Future<void> fetchFields() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_fields.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_fields.php'),
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -105,7 +106,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
       }
 
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userProfileDetails.php?user_id=$userId'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userProfileDetails.php?user_id=$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -232,7 +233,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
       final userId = await UserState.getUserId();
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/user/edit_userProfile.php'),
+        Uri.parse('${AppConfig.baseUrl}user/edit_userProfile.php'),
       );
 
       // Add form fields

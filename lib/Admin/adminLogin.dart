@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:CMSapplication/Admin/manageConferencePage.dart';
 import 'package:CMSapplication/services/conference_state.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({super.key});
@@ -20,6 +21,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   String? _selectedConference;
   List<Map<String, dynamic>> _conferences = [];
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -31,7 +33,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   Future<void> _loadConferences() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_conference.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_conference.php'),
       );
 
       if (response.statusCode == 200) {
@@ -87,12 +89,16 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   }
 
   void _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     if (_formKey.currentState!.validate()) {
       try {
         print('Sending request with email: ${_emailController.text}'); // Debug print
         
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/admin/admin_login.php'),
+          Uri.parse('${AppConfig.baseUrl}admin/admin_login.php'),
           body: {
             'email': _emailController.text,
             'password': _passwordController.text,
@@ -138,6 +144,10 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             ),
           );
         }
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -270,13 +280,17 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 16),
 

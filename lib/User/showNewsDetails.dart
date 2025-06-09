@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import '../config/app_config.dart';
 
 class ShowNewsDetails extends StatefulWidget {
   final String newsId;
@@ -25,7 +26,7 @@ class _ShowNewsDetailsState extends State<ShowNewsDetails> {
   Future<void> _fetchNewsDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userNewsDetails.php?news_id=${widget.newsId}'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userNewsDetails.php?news_id=${widget.newsId}'),
       );
 
       final data = json.decode(response.body);

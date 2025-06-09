@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'userLogin.dart';
+import '../config/app_config.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -24,10 +26,11 @@ class _SignUpPageState extends State<SignUpPage> {
       
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/user/signup.php'),
+          Uri.parse('${AppConfig.baseUrl}user/signup.php'),
           body: {
             'email': _emailController.text,
             'password': _passwordController.text,
+            'confirm_password': _confirmPasswordController.text,
           },
         );
 

@@ -8,6 +8,7 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class PaperReviewStep extends StatefulWidget {
   final String paperId;
@@ -145,7 +146,7 @@ class _PaperReviewStepState extends State<PaperReviewStep> {
   Future<void> fetchReviewDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_paperReviewStep.php?paper_id=${widget.paperId}')
+        Uri.parse('${AppConfig.baseUrl}user/get_paperReviewStep.php?paper_id=${widget.paperId}')
       );
 
       if (response.statusCode == 200) {

@@ -13,6 +13,7 @@ import 'package:CMSapplication/main.dart';
 import 'package:CMSapplication/services/conference_state.dart';
 import 'package:CMSapplication/Admin/reviewerDetails.dart';
 import 'addReviewer.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class ManageReviewerPage extends StatefulWidget {
   @override
@@ -70,7 +71,7 @@ class _ManageReviewerPageState extends State<ManageReviewerPage> {
     try {
       final searchTerm = _searchController.text;
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_detailsReviewer.php'
+        Uri.parse('${AppConfig.baseUrl}admin/get_detailsReviewer.php'
             '?search=${Uri.encodeComponent(searchTerm)}'
             '&searchBy=${Uri.encodeComponent(_selectedSearchBy)}'
             '&status=${Uri.encodeComponent(_selectedStatus)}'),

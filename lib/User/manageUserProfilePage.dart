@@ -16,6 +16,7 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class ManageUserProfilePage extends StatefulWidget {
   const ManageUserProfilePage({Key? key}) : super(key: key);
@@ -60,7 +61,7 @@ class _ManageUserProfilePageState extends State<ManageUserProfilePage> {
       }
 
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userProfile.php?user_id=$userId'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userProfile.php?user_id=$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -194,7 +195,7 @@ class _ManageUserProfilePageState extends State<ManageUserProfilePage> {
       }
 
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/edit_userPassword.php'),
+        Uri.parse('${AppConfig.baseUrl}user/edit_userPassword.php'),
         body: {
           'user_id': userId,
           'old_password': _oldPasswordController.text,
@@ -318,7 +319,7 @@ class _ManageUserProfilePageState extends State<ManageUserProfilePage> {
                 }
 
                 final response = await http.post(
-                  Uri.parse('https://cmsa.digital/user/edit_userPassword.php'),
+                  Uri.parse('${AppConfig.baseUrl}user/edit_userPassword.php'),
                   body: {
                     'user_id': userId,
                     'old_password': _oldPasswordController.text,

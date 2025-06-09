@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/User/userLogin.dart';
+import '../config/app_config.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final int userId;
@@ -56,7 +57,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/user/reset_password.php'),
+          Uri.parse('${AppConfig.baseUrl}user/reset_password.php'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'user_id': widget.userId.toString(),

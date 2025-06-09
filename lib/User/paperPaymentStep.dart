@@ -11,6 +11,7 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class PaperPaymentStep extends StatefulWidget {
   final String paperId;
@@ -55,7 +56,7 @@ class _PaperPaymentStepState extends State<PaperPaymentStep> {
   Future<void> fetchPaymentData() async {
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/get_paperPaymentStep.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_paperPaymentStep.php'),
         body: {'paper_id': widget.paperId},
       );
 
@@ -193,7 +194,7 @@ class _PaperPaymentStepState extends State<PaperPaymentStep> {
       // Create a multipart request
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/user/add_paperPaymentStep.php'),
+        Uri.parse('${AppConfig.baseUrl}user/add_paperPaymentStep.php'),
       );
 
       // Add fields

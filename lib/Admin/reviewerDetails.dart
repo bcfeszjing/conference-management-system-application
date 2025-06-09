@@ -10,6 +10,7 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart'; // Import AppConfig
 
 class ReviewerDetails extends StatefulWidget {
   final String reviewerId;
@@ -56,7 +57,7 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
   Future<void> fetchReviewerDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_detailsReviewer.php?reviewer_id=${widget.reviewerId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_detailsReviewer.php?reviewer_id=${widget.reviewerId}'),
       );
 
       if (response.statusCode == 200) {
@@ -74,7 +75,7 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
   Future<void> _toggleStatus() async {
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/edit_detailsReviewer.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_detailsReviewer.php'),
         body: {
           'action': 'toggle_status',
           'reviewer_id': widget.reviewerId,
@@ -495,7 +496,7 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
         }
         
         final response = await http.get(
-          Uri.parse('https://cmsa.digital/admin/reset_reviewerPassword.php?reviewer_id=${widget.reviewerId}&conf_id=$confId'),
+          Uri.parse('${AppConfig.baseUrl}admin/reset_reviewerPassword.php?reviewer_id=${widget.reviewerId}&conf_id=$confId'),
         );
 
         if (response.statusCode == 200) {
@@ -548,7 +549,7 @@ class _ReviewerDetailsState extends State<ReviewerDetails> {
     if (confirm == true) {
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/admin/edit_detailsReviewer.php'),
+          Uri.parse('${AppConfig.baseUrl}admin/edit_detailsReviewer.php'),
           body: {
             'action': 'remove_account',
             'reviewer_id': widget.reviewerId,

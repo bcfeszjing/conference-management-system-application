@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/User/forgetPasswordVerification.dart';
+import '../config/app_config.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({super.key});
@@ -21,7 +22,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
       
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/user/forget_password.php'),
+          Uri.parse('${AppConfig.baseUrl}user/forget_password.php'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'email': _emailController.text,

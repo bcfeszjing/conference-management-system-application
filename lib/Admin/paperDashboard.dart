@@ -7,6 +7,7 @@ import 'package:CMSapplication/Admin/paperCameraReady.dart';
 import 'package:CMSapplication/Admin/paperPublishingManagement.dart';
 import 'package:CMSapplication/Admin/paperPaymentDetails.dart';
 import 'package:CMSapplication/Admin/paperAddCoauthor.dart';
+import '../config/app_config.dart';
 
 class PaperDashboard extends StatefulWidget {
   final String paperId;
@@ -30,7 +31,7 @@ class _PaperDashboardState extends State<PaperDashboard> {
   Future<void> _fetchPaperStatus() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_detailsPaper.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_detailsPaper.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {

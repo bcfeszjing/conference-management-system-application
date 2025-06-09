@@ -10,6 +10,7 @@ import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../config/app_config.dart';
 
 class PaperCameraReadyUpload extends StatefulWidget {
   final String paperId;
@@ -441,7 +442,7 @@ class _PaperCameraReadyUploadState extends State<PaperCameraReadyUpload> {
   Future<void> fetchPaperData() async {
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/get_paperCameraReadyUpload.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_paperCameraReadyUpload.php'),
         body: {'paper_id': widget.paperId},
       );
 
@@ -534,7 +535,7 @@ class _PaperCameraReadyUploadState extends State<PaperCameraReadyUpload> {
       // Create multipart request
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/user/add_paperCameraReadyUpload.php'),
+        Uri.parse('${AppConfig.baseUrl}user/add_paperCameraReadyUpload.php'),
       );
 
       // Add common fields

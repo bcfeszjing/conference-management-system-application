@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:CMSapplication/Admin/managePapersPage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class PaperCameraReady extends StatefulWidget {
   final String paperId;
@@ -781,7 +782,7 @@ class _PaperCameraReadyState extends State<PaperCameraReady> {
   Future<void> _fetchPaperData() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperCameraReady.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperCameraReady.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {
@@ -836,7 +837,7 @@ class _PaperCameraReadyState extends State<PaperCameraReady> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/edit_paperCameraReady.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_paperCameraReady.php'),
         body: {
           'paper_id': widget.paperId,
           'paper_status': _selectedStatus,
@@ -916,7 +917,7 @@ class _PaperCameraReadyState extends State<PaperCameraReady> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/delete_paperCameraReady.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/delete_paperCameraReady.php?paper_id=${widget.paperId}'),
       );
 
       setState(() {

@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:CMSapplication/Admin/editPaperPublishingManagement.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class PaperPublishingManagement extends StatefulWidget {
   final String paperId;
@@ -458,7 +459,7 @@ class _PaperPublishingManagementState extends State<PaperPublishingManagement> {
   Future<void> _fetchPaperData() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperPublishingManagement.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperPublishingManagement.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {

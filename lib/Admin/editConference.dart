@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'manageConferencePage.dart';
+import '../config/app_config.dart';
 
 class EditConferencePage extends StatefulWidget {
   final String conferenceId;
@@ -22,6 +23,9 @@ class _EditConferencePageState extends State<EditConferencePage> {
   final TextEditingController ccEmailController = TextEditingController();
   String? confType;
   String? confStatus;
+  bool _isLoading = false;
+  bool _isSubmitting = false;
+  bool _isDeleting = false;
 
   @override
   void initState() {
@@ -30,25 +34,37 @@ class _EditConferencePageState extends State<EditConferencePage> {
   }
 
   Future<void> fetchConferenceDetails() async {
-    final response = await http.get(
-      Uri.parse('https://cmsa.digital/admin/get_detailsConference.php?conf_id=${widget.conferenceId}'),
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+    try {
       setState(() {
-        confIdController.text = data['conf_id'];
-        confNameController.text = data['conf_name'];
-        confDoiController.text = data['conf_doi'];
-        ccEmailController.text = data['cc_email'];
-        submissionDateController.text = data['conf_submitdate'];
-        cameraReadyDateController.text = data['conf_crsubmitdate'];
-        journalFinalDateController.text = data['conf_date'];
-        confType = data['conf_type'];
-        confStatus = data['conf_status'];
+        _isLoading = true;
       });
-    } else {
-      throw Exception('Failed to load conference details');
+      
+      final response = await http.get(
+        Uri.parse('${AppConfig.baseUrl}admin/get_detailsConference.php?conf_id=${widget.conferenceId}'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          confIdController.text = data['conf_id'];
+          confNameController.text = data['conf_name'];
+          confDoiController.text = data['conf_doi'];
+          ccEmailController.text = data['cc_email'];
+          submissionDateController.text = data['conf_submitdate'];
+          cameraReadyDateController.text = data['conf_crsubmitdate'];
+          journalFinalDateController.text = data['conf_date'];
+          confType = data['conf_type'];
+          confStatus = data['conf_status'];
+        });
+      } else {
+        throw Exception('Failed to load conference details');
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -377,26 +393,38 @@ class _EditConferencePageState extends State<EditConferencePage> {
   }
 
   Future<void> _saveConference() async {
-    final response = await http.post(
-      Uri.parse('https://cmsa.digital/admin/edit_conference.php'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'conf_id': confIdController.text,
-        'conf_name': confNameController.text,
-        'conf_status': confStatus!,
-        'conf_type': confType!,
-        'conf_doi': confDoiController.text,
-        'cc_email': ccEmailController.text,
-        'conf_submitdate': submissionDateController.text,
-        'conf_crsubmitdate': cameraReadyDateController.text,
-        'conf_date': journalFinalDateController.text,
-      }),
-    );
+    try {
+      setState(() {
+        _isSubmitting = true;
+      });
+      
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}admin/edit_conference.php'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'conf_id': confIdController.text,
+          'conf_name': confNameController.text,
+          'conf_status': confStatus!,
+          'conf_type': confType!,
+          'conf_doi': confDoiController.text,
+          'cc_email': ccEmailController.text,
+          'conf_submitdate': submissionDateController.text,
+          'conf_crsubmitdate': cameraReadyDateController.text,
+          'conf_date': journalFinalDateController.text,
+        }),
+      );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to save conference');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to save conference');
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
     }
   }
 
@@ -453,18 +481,30 @@ class _EditConferencePageState extends State<EditConferencePage> {
   }
 
   Future<void> _deleteConference() async {
-    final response = await http.post(
-      Uri.parse('https://cmsa.digital/admin/delete_conference.php'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'conf_id': confIdController.text,
-      }),
-    );
+    try {
+      setState(() {
+        _isDeleting = true;
+      });
+      
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}admin/delete_conference.php'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'conf_id': confIdController.text,
+        }),
+      );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete conference');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete conference');
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _isDeleting = false;
+      });
     }
   }
 

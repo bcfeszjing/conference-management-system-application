@@ -11,6 +11,7 @@ import 'package:CMSapplication/Admin/manageUserAccountPage.dart';
 import 'package:CMSapplication/Admin/manageSettingsPage.dart';
 import 'package:CMSapplication/main.dart';
 import 'package:CMSapplication/services/conference_state.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class ManagePaymentsPage extends StatefulWidget {
   @override
@@ -73,9 +74,10 @@ class _ManagePaymentsPageState extends State<ManagePaymentsPage> {
         if (searchTerm.isNotEmpty) 'searchTerm': searchTerm,
         if (searchTerm.isNotEmpty) 'searchBy': _searchBy,
         'status': _statusFilter,
+        'conf_id': await ConferenceState.getSelectedConferenceId() ?? '',
       };
       
-      final uri = Uri.parse('https://cmsa.digital/admin/get_payments.php')
+      final uri = Uri.parse('${AppConfig.baseUrl}admin/get_payments.php')
           .replace(queryParameters: queryParams);
       
       final response = await http.get(uri);

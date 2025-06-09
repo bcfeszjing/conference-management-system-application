@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'manageReviewerPage.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../config/app_config.dart'; // Import AppConfig
 
 class AddReviewer extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class _AddReviewerState extends State<AddReviewer> {
   Future<void> fetchFields() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_fields.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_fields.php'),
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -169,7 +170,7 @@ class _AddReviewerState extends State<AddReviewer> {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/admin/add_reviewer.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/add_reviewer.php'),
       );
 
       request.fields.addAll({

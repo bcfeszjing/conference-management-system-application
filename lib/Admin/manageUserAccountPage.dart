@@ -12,6 +12,7 @@ import 'package:CMSapplication/Admin/manageSettingsPage.dart';
 import 'package:CMSapplication/main.dart';
 import 'package:CMSapplication/services/conference_state.dart';
 import 'package:CMSapplication/Admin/memberDetails.dart';
+import '../config/app_config.dart';
 
 class ManageUserAccountPage extends StatefulWidget {
   @override
@@ -62,7 +63,7 @@ class _ManageUserAccountPageState extends State<ManageUserAccountPage> {
     try {
       final searchTerm = _searchController.text;
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_detailsMember.php'
+        Uri.parse('${AppConfig.baseUrl}admin/get_detailsMember.php'
             '?search=${Uri.encodeComponent(searchTerm)}'
             '&searchBy=${Uri.encodeComponent(_selectedSearchBy)}'),
       );

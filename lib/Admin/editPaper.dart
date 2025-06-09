@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/Admin/paperDetails.dart';
+import '../config/app_config.dart';
 
 class EditPaper extends StatefulWidget {
   final String paperId;
@@ -45,7 +46,7 @@ class _EditPaperState extends State<EditPaper> {
   Future<void> _fetchConferences() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperConference.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperConference.php'),
       );
 
       if (response.statusCode == 200) {
@@ -62,7 +63,7 @@ class _EditPaperState extends State<EditPaper> {
   Future<void> _fetchPaperDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/edit_paper.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_paper.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {
@@ -108,7 +109,7 @@ class _EditPaperState extends State<EditPaper> {
       setState(() => _isLoading = true);
       
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/edit_paper.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_paper.php'),
         body: {
           'paper_id': widget.paperId,
           'paper_title': _titleController.text,

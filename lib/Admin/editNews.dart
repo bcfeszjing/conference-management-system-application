@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/Admin/manageNewsPage.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class EditNews extends StatefulWidget {
   final String newsId;
@@ -23,6 +24,8 @@ class _EditNewsState extends State<EditNews> {
   int _wordCount = 0;
   String? _titleError;
   String? _contentError;
+  bool _isDeleting = false;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -38,9 +41,13 @@ class _EditNewsState extends State<EditNews> {
   }
 
   Future<void> _fetchNewsDetails() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/edit_news.php?news_id=${widget.newsId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_news.php?news_id=${widget.newsId}'),
       );
 
       if (response.statusCode == 200) {
@@ -58,6 +65,10 @@ class _EditNewsState extends State<EditNews> {
   }
 
   Future<void> _deleteNews() async {
+    setState(() {
+      _isDeleting = true;
+    });
+    
     bool? confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -82,21 +93,30 @@ class _EditNewsState extends State<EditNews> {
     );
 
     if (confirm == true) {
-      final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/delete_news.php'),
-        body: {'news_id': widget.newsId},
-      );
-
-      if (response.statusCode == 200) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ManageNewsPage()),
+      try {
+        final response = await http.post(
+          Uri.parse('${AppConfig.baseUrl}admin/delete_news.php'),
+          body: {'news_id': widget.newsId},
         );
+
+        if (response.statusCode == 200) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ManageNewsPage()),
+          );
+        }
+      } catch (e) {
+        print('Error deleting news: $e');
+        setState(() => _isDeleting = false);
       }
     }
   }
 
   Future<void> _saveNews() async {
+    setState(() {
+      _isSubmitting = true;
+    });
+    
     // Reset previous errors
     setState(() {
       _titleError = null;
@@ -128,20 +148,25 @@ class _EditNewsState extends State<EditNews> {
       return;
     }
 
-    final response = await http.post(
-      Uri.parse('https://cmsa.digital/admin/edit_news.php'),
-      body: {
-        'news_id': widget.newsId,
-        'news_title': _titleController.text,
-        'news_content': _contentController.text,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ManageNewsPage()),
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}admin/edit_news.php'),
+        body: {
+          'news_id': widget.newsId,
+          'news_title': _titleController.text,
+          'news_content': _contentController.text,
+        },
       );
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ManageNewsPage()),
+        );
+      }
+    } catch (e) {
+      print('Error updating news: $e');
+      setState(() => _isSubmitting = false);
     }
   }
   

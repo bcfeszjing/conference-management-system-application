@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/services/user_state.dart';
+import '../config/app_config.dart';
 
 class AddUserMessages extends StatefulWidget {
   const AddUserMessages({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _AddUserMessagesState extends State<AddUserMessages> {
   Future<void> _fetchConferences() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userMessagesConference.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userMessagesConference.php'),
       );
 
       if (response.statusCode == 200) {
@@ -99,7 +100,7 @@ class _AddUserMessagesState extends State<AddUserMessages> {
       }
 
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/add_userMessages.php'),
+        Uri.parse('${AppConfig.baseUrl}user/add_userMessages.php'),
         body: {
           'conf_id': _selectedConference,
           'message_title': _titleController.text,

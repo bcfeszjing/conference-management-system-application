@@ -12,6 +12,7 @@ import 'package:CMSapplication/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/services/conference_state.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class ManageConferencePage extends StatefulWidget {
   final String? selectedConference;
@@ -64,7 +65,7 @@ class _ManageConferencePageState extends State<ManageConferencePage> {
       isLoading = true;
     });
     
-    final response = await http.get(Uri.parse('https://cmsa.digital/admin/get_conferences.php'));
+    final response = await http.get(Uri.parse('${AppConfig.baseUrl}admin/get_conferences.php'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);

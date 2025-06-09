@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // Use universal_html for web platform safety
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class PaperDetails extends StatefulWidget {
   final String paperId;
@@ -57,7 +58,7 @@ class _PaperDetailsState extends State<PaperDetails> {
   Future<void> fetchPaperDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_detailsPaper.php?paper_id=${widget.paperId}')
+        Uri.parse('${AppConfig.baseUrl}admin/get_detailsPaper.php?paper_id=${widget.paperId}')
       );
       
       if (response.statusCode == 200) {
@@ -204,7 +205,7 @@ class _PaperDetailsState extends State<PaperDetails> {
       
       final String fileExt = '.docx'; // Default to .docx
       final String filename = '$paperName$fileExt';
-      final String downloadUrl = 'https://cmsa.digital/assets/papers/no_aff/$filename';
+      final String downloadUrl = '${AppConfig.baseUrl}assets/papers/no_aff/$filename';
       
       print('Downloading file from: $downloadUrl');
 
@@ -515,7 +516,7 @@ class _PaperDetailsState extends State<PaperDetails> {
       
       final String fileExt = '.docx'; // Default to .docx
       final String filename = '$paperName-fullaff$fileExt';
-      final String downloadUrl = 'https://cmsa.digital/assets/papers/aff/$filename';
+      final String downloadUrl = '${AppConfig.baseUrl}assets/papers/aff/$filename';
       
       print('Downloading file from: $downloadUrl');
 
@@ -888,7 +889,7 @@ class _PaperDetailsState extends State<PaperDetails> {
 
         // Make API call to delete paper
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/admin/delete_paper.php'),
+          Uri.parse('${AppConfig.baseUrl}admin/delete_paper.php'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'paper_id': widget.paperId,

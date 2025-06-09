@@ -9,6 +9,7 @@ import 'package:CMSapplication/User/applyReviewer.dart';
 import 'package:CMSapplication/services/user_state.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/app_config.dart';
 
 class ManageUserReviewerPage extends StatefulWidget {
   const ManageUserReviewerPage({Key? key}) : super(key: key);
@@ -56,7 +57,7 @@ class _ManageUserReviewerPageState extends State<ManageUserReviewerPage> {
 
       // First get the user's reviewer status
       final userResponse = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userProfile.php?user_id=$userId'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userProfile.php?user_id=$userId'),
       );
 
       if (userResponse.statusCode == 200) {
@@ -73,7 +74,7 @@ class _ManageUserReviewerPageState extends State<ManageUserReviewerPage> {
       // Then get the reviews if the reviewer is verified
       if (revStatus == "Verified") {
         final reviewsResponse = await http.get(
-          Uri.parse('https://cmsa.digital/user/get_userReview.php?user_id=$userId'),
+          Uri.parse('${AppConfig.baseUrl}user/get_userReview.php?user_id=$userId'),
         );
 
         if (reviewsResponse.statusCode == 200) {

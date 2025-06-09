@@ -11,6 +11,7 @@ import 'package:CMSapplication/Admin/manageSettingsPage.dart';
 import 'package:CMSapplication/main.dart';
 import 'package:CMSapplication/services/conference_state.dart';
 import 'package:CMSapplication/Admin/messageDetails.dart';
+import 'package:CMSapplication/config/app_config.dart'; // Import AppConfig
 
 class ManageMessagesPage extends StatefulWidget {
   @override
@@ -55,9 +56,13 @@ class _ManageMessagesPageState extends State<ManageMessagesPage> {
   }
 
   Future<void> fetchMessages() async {
+    setState(() {
+      isLoading = true;
+    });
+    
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_messages.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_messages.php'),
       );
 
       if (response.statusCode == 200) {

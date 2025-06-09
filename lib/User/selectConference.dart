@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:CMSapplication/User/addUserPaper.dart';
+import 'package:CMSapplication/services/conference_state.dart';
+import 'package:CMSapplication/User/manageUserNewsPage.dart';
+import '../config/app_config.dart';
 
 class SelectConference extends StatefulWidget {
   const SelectConference({Key? key}) : super(key: key);
@@ -22,9 +25,11 @@ class _SelectConferenceState extends State<SelectConference> {
   }
 
   Future<void> fetchConferences() async {
+    setState(() => isLoading = true);
+    
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_selectConference.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_selectConference.php'),
       );
 
       if (response.statusCode == 200) {

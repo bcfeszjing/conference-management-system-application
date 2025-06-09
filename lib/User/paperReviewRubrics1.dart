@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/User/paperReviewRubrics2.dart';
+import '../config/app_config.dart';
 
 class PaperReviewRubrics1 extends StatefulWidget {
   final String reviewId;
@@ -43,7 +44,7 @@ class _PaperReviewRubrics1State extends State<PaperReviewRubrics1> {
   Future<void> fetchRubrics() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_reviewPaperRubrics1.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_reviewPaperRubrics1.php'),
       );
 
       if (response.statusCode == 200) {
@@ -548,7 +549,7 @@ class _PaperReviewRubrics1State extends State<PaperReviewRubrics1> {
       }
 
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/add_paperReviewRubrics1.php'),
+        Uri.parse('${AppConfig.baseUrl}user/add_paperReviewRubrics1.php'),
         body: reviewData,
       );
 

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../config/app_config.dart';
 
 class EditPaperPublishingManagement extends StatefulWidget {
   final String paperId;
@@ -33,7 +34,7 @@ class _EditPaperPublishingManagementState extends State<EditPaperPublishingManag
   Future<void> _fetchPaperData() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperPublishingManagement.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperPublishingManagement.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {
@@ -184,7 +185,7 @@ class _EditPaperPublishingManagementState extends State<EditPaperPublishingManag
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/admin/edit_paperPublishingManagement.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_paperPublishingManagement.php'),
       );
 
       request.fields['paper_id'] = widget.paperId;

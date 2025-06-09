@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/app_config.dart'; // Import AppConfig
 
 class AddPaperReviewer extends StatefulWidget {
   final String paperId;
@@ -16,6 +17,8 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
   String _selectedSearchType = 'Name';
   List<dynamic> _reviewers = [];
   bool _isLoading = false;
+  String? _selectedReviewer;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -29,7 +32,7 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
     try {
       final response = await http.get(
         Uri.parse(
-          'https://cmsa.digital/admin/get_paperReviewer.php?'
+          '${AppConfig.baseUrl}admin/get_paperReviewer.php?'
           'paper_id=${widget.paperId}'
           '&search=${Uri.encodeComponent(_searchController.text)}'
           '&type=${Uri.encodeComponent(_selectedSearchType)}'
@@ -52,50 +55,26 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
     }
   }
 
-  Future<void> _assignReviewer(String userId) async {
-    // Show confirmation dialog
-    bool confirm = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm Assignment'),
-          content: Text('Are you sure you want to assign this reviewer?'),
-          actions: [
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              child: Text('OK'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
-
-    if (!confirm) return;
-
-    // Show loading indicator
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(child: CircularProgressIndicator());
-      },
-    );
-
+  Future<void> _assignReviewer() async {
+    if (_selectedReviewer == null || _selectedReviewer!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a reviewer')),
+      );
+      return;
+    }
+    
+    setState(() {
+      _isSubmitting = true;
+    });
+    
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/add_paperReviewer.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/add_paperReviewer.php'),
         body: {
           'paper_id': widget.paperId,
-          'user_id': userId,
+          'user_id': _selectedReviewer,
         },
       );
-
-      // Close loading indicator
-      Navigator.pop(context);
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -119,11 +98,6 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
         }
       }
     } catch (e) {
-      // Close loading indicator if still showing
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
-      
       print('Error assigning reviewer: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -131,6 +105,10 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
     }
   }
 
@@ -257,7 +235,7 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
                                 ),
                               ),
                               ElevatedButton(
-                                onPressed: () => _assignReviewer(reviewer['user_id'].toString()),
+                                onPressed: () => _selectedReviewer = reviewer['user_id'].toString(),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xFFFFB800),
                                   foregroundColor: Colors.black,
@@ -275,6 +253,25 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
                       );
                     },
                   ),
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _assignReviewer,
+            child: Text(
+              'Assign Reviewer',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              padding: EdgeInsets.symmetric(vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
           ),
         ],
       ),

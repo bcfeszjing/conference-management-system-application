@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'manageUserAccountPage.dart';
 import '../services/conference_state.dart';
+import '../config/app_config.dart';
 
 class MemberDetails extends StatefulWidget {
   final String memberId;
@@ -26,7 +27,7 @@ class _MemberDetailsState extends State<MemberDetails> {
   Future<void> fetchMemberDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_detailsMember.php?member_id=${widget.memberId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_detailsMember.php?member_id=${widget.memberId}'),
       );
 
       if (response.statusCode == 200) {
@@ -73,7 +74,7 @@ class _MemberDetailsState extends State<MemberDetails> {
         }
         
         final response = await http.get(
-          Uri.parse('https://cmsa.digital/admin/reset_memberPassword.php?member_id=${widget.memberId}&conf_id=$confId'),
+          Uri.parse('${AppConfig.baseUrl}admin/reset_memberPassword.php?member_id=${widget.memberId}&conf_id=$confId'),
         );
 
         if (response.statusCode == 200) {
@@ -126,7 +127,7 @@ class _MemberDetailsState extends State<MemberDetails> {
     if (confirm == true) {
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/admin/edit_detailsMember.php'),
+          Uri.parse('${AppConfig.baseUrl}admin/edit_detailsMember.php'),
           body: {
             'action': 'remove_account',
             'member_id': widget.memberId,

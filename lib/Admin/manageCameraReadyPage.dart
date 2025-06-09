@@ -11,6 +11,7 @@ import 'package:CMSapplication/Admin/manageMessagesPage.dart';
 import 'package:CMSapplication/Admin/manageUserAccountPage.dart';
 import 'package:CMSapplication/Admin/manageSettingsPage.dart';
 import 'package:CMSapplication/main.dart';
+import '../config/app_config.dart';
 
 class ManageCameraReadyPage extends StatefulWidget {
   @override
@@ -61,7 +62,7 @@ class _ManageCameraReadyPageState extends State<ManageCameraReadyPage> {
     final confId = await ConferenceState.getSelectedConferenceId();
     
     final url = Uri.parse(
-        'https://cmsa.digital/admin/get_cameraReadyPapers.php?search=$searchTerm&type=$_selectedSearchType&status=$_selectedUserStatus&conf_id=$confId');
+        '${AppConfig.baseUrl}admin/get_cameraReadyPapers.php?search=$searchTerm&type=$_selectedSearchType&status=$_selectedUserStatus&conf_id=$confId');
     
     try {
       final response = await http.get(url);
@@ -154,7 +155,7 @@ class _ManageCameraReadyPageState extends State<ManageCameraReadyPage> {
   Future<List<dynamic>> _fetchCoauthors(String paperId) async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_cameraReadyCoauthor.php?paper_id=$paperId'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_cameraReadyCoauthor.php?paper_id=$paperId'),
       );
       
       if (response.statusCode == 200) {

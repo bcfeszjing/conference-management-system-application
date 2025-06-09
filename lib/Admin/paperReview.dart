@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:CMSapplication/Admin/paperReviewDetails.dart';
 import 'package:CMSapplication/Admin/addPaperReviewer.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class PaperReview extends StatefulWidget {
   final String paperId;
@@ -32,7 +33,7 @@ class _PaperReviewState extends State<PaperReview> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperReview.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperReview.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {

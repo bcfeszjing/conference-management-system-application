@@ -13,6 +13,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart'; // Import the intl package for date formatting
 import 'package:CMSapplication/services/conference_state.dart';
 import 'package:CMSapplication/Admin/editNews.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class ManageNewsPage extends StatefulWidget {
   @override
@@ -28,11 +29,14 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
   int totalPages = 1;
   final TextEditingController _searchController = TextEditingController();
   bool isSearching = false;
+  bool _isLoading = false;
+  late Future<List<dynamic>> _newsFuture;
 
   @override
   void initState() {
     super.initState();
     loadSelectedConference();
+    _newsFuture = fetchNews();
   }
 
   @override
@@ -49,17 +53,38 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
   }
 
   Future<List<dynamic>> fetchNews() async {
-    final response = await http.get(
-      Uri.parse('https://cmsa.digital/admin/get_news.php'),
-    );
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final response = await http.get(
+        Uri.parse('${AppConfig.baseUrl}admin/get_news.php'),
+      );
 
-    if (response.statusCode == 200) {
-      allNews = json.decode(response.body);
-      _filterNews();
-      return allNews;
-    } else {
-      throw Exception('Failed to load news');
+      if (response.statusCode == 200) {
+        allNews = json.decode(response.body);
+        _filterNews();
+        return allNews;
+      } else {
+        throw Exception('Failed to load news');
+      }
+    } catch (e) {
+      print('Error loading news: $e');
+      throw e;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  void refreshNews() {
+    setState(() {
+      _newsFuture = fetchNews();
+    });
   }
 
   void _filterNews() {
@@ -138,6 +163,10 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
               });
             },
           ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: refreshNews,
+          ),
         ],
       ),
       body: Column(
@@ -176,63 +205,63 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
             ),
           Expanded(
             child: FutureBuilder<List<dynamic>>(
-        future: fetchNews(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator(color: Color(0xFFffc107)));
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 60, color: Colors.red[300]),
-                  SizedBox(height: 16),
-                  Text(
-                    'Error loading news',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text('${snapshot.error}', style: TextStyle(color: Colors.grey[700])),
-                ],
-              ),
-            );
-                } else if (filteredNews.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.newspaper, size: 60, color: Colors.grey[400]),
-                  SizedBox(height: 16),
-                  Text(
-                          isSearching ? 'No matching news found' : 'No news available',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
+              future: _newsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator(color: Color(0xFFffc107)));
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline, size: 60, color: Colors.red[300]),
+                        SizedBox(height: 16),
+                        Text(
+                          'Error loading news',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Text('${snapshot.error}', style: TextStyle(color: Colors.grey[700])),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
+                  );
+                } else if (filteredNews.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.newspaper, size: 60, color: Colors.grey[400]),
+                        SizedBox(height: 16),
+                        Text(
+                          isSearching ? 'No matching news found' : 'No news available',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
                           isSearching 
                               ? 'Try a different search term' 
                               : 'Add your first news item using the button below',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
+                  );
+                } else {
                   final paginatedNews = getPaginatedNews();
                   return Column(
                     children: [
                       Expanded(
                         child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           itemCount: paginatedNews.length + 1,
-              itemBuilder: (context, index) {
+                          itemBuilder: (context, index) {
                             if (index == paginatedNews.length) {
                               // Add pagination controls inside the ListView
                               return Container(
@@ -332,130 +361,130 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
                                   ],
                                 ),
                               );
-                }
-                
+                            }
+                            
                             final news = paginatedNews[index];
-                // Format the news date
-                DateTime dateTime = DateTime.parse(news['news_date']);
-                String formattedDate = DateFormat('MM/dd/yyyy').format(dateTime);
-                String formattedTime = DateFormat('hh:mm a').format(dateTime);
+                            // Format the news date
+                            DateTime dateTime = DateTime.parse(news['news_date']);
+                            String formattedDate = DateFormat('MM/dd/yyyy').format(dateTime);
+                            String formattedTime = DateFormat('hh:mm a').format(dateTime);
 
-                // Shorten title and content
-                String title = news['news_title'];
-                String content = news['news_content'];
-                String shortenedTitle = title.length > 50 ? '${title.substring(0, 50)}...' : title;
-                String shortenedContent = content.length > 100 ? '${content.substring(0, 100)}...' : content;
+                            // Shorten title and content
+                            String title = news['news_title'];
+                            String content = news['news_content'];
+                            String shortenedTitle = title.length > 50 ? '${title.substring(0, 50)}...' : title;
+                            String shortenedContent = content.length > 100 ? '${content.substring(0, 100)}...' : content;
 
-                return Card(
-                  margin: EdgeInsets.only(bottom: 16.0),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFffa000).withOpacity(0.15),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Color(0xFFffe082)),
+                            return Card(
+                              margin: EdgeInsets.only(bottom: 16.0),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    formattedDate,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFFcc9600),
+                                  Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFffa000).withOpacity(0.15),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: Color(0xFFffe082)),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                formattedDate,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFFcc9600),
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                formattedTime,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 16),
+                                        Expanded(
+                                          child: Text(
+                                            shortenedTitle,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Color(0xFFcc9600),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    formattedTime,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                                  Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          shortenedContent,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                        SizedBox(height: 16),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            ElevatedButton.icon(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => EditNews(newsId: news['news_id']),
+                                                  ),
+                                                );
+                                              },
+                                              icon: Icon(Icons.edit),
+                                              label: Text('Edit Details'),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color(0xFFffc107),
+                                                foregroundColor: Colors.white,
+                                                elevation: 0,
+                                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                shortenedTitle,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Color(0xFFcc9600),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              shortenedContent,
-                              style: TextStyle(
-                                fontSize: 16,
-                                height: 1.4,
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditNews(newsId: news['news_id']),
-                                      ),
-                                    );
-                                  },
-                                  icon: Icon(Icons.edit),
-                                  label: Text('Edit Details'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFffc107),
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
                     ],
-                  ),
-                );
+                  );
+                }
               },
-                        ),
-                      ),
-                    ],
-            );
-          }
-        },
             ),
           ),
         ],
@@ -466,7 +495,10 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddNews()),
-          );
+          ).then((_) {
+            // Refresh news after adding a new one
+            refreshNews();
+          });
         },
         child: Icon(Icons.add, color: Colors.white),
         backgroundColor: Color(0xFFffc107),
@@ -553,11 +585,7 @@ class _ManageNewsPageState extends State<ManageNewsPage> {
                   isActive: true,
                   onTap: () {
                     Navigator.pop(context);
-                    setState(() {
-                      allNews = [];
-                      filteredNews = [];
-                    });
-                    fetchNews();
+                    refreshNews();
                   },
                 ),
                 _buildDrawerItem(

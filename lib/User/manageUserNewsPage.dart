@@ -8,6 +8,7 @@ import 'package:CMSapplication/User/manageUserReviewerPage.dart';
 import 'package:CMSapplication/User/manageUserMessagesPage.dart';
 import 'package:CMSapplication/User/manageUserProfilePage.dart';
 import 'package:CMSapplication/User/showNewsDetails.dart';
+import '../config/app_config.dart';
 
 class ManageUserNewsPage extends StatefulWidget {
   const ManageUserNewsPage({Key? key}) : super(key: key);
@@ -49,7 +50,7 @@ class _ManageUserNewsPageState extends State<ManageUserNewsPage> {
     
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userNews.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userNews.php'),
       );
 
       final data = json.decode(response.body);

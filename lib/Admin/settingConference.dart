@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/services/conference_state.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class SettingConferencePage extends StatefulWidget {
   @override
@@ -73,7 +74,7 @@ class _SettingConferencePageState extends State<SettingConferencePage> {
     
     if (conferenceId != null && adminEmail != null) {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_settingConference.php?conf_id=$conferenceId&admin_email=$adminEmail'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_settingConference.php?conf_id=$conferenceId&admin_email=$adminEmail'),
       );
 
       if (response.statusCode == 200) {
@@ -152,7 +153,7 @@ class _SettingConferencePageState extends State<SettingConferencePage> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/edit_settingConference.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_settingConference.php'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'conf_id': conferenceId,

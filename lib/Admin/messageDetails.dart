@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/services/conference_state.dart';
+import '../config/app_config.dart';
 
 class MessageDetails extends StatefulWidget {
   final String messageId;
@@ -25,9 +26,13 @@ class _MessageDetailsState extends State<MessageDetails> {
   }
 
   Future<void> fetchMessageDetails() async {
+    setState(() {
+      isLoading = true;
+    });
+    
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_messageDetails.php?message_id=${widget.messageId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_messageDetails.php?message_id=${widget.messageId}'),
       );
 
       if (response.statusCode == 200) {
@@ -49,8 +54,12 @@ class _MessageDetailsState extends State<MessageDetails> {
   }
 
   Future<void> _sendReply() async {
-    if (_replyController.text.trim().isEmpty) return;
-
+    if (_replyController.text.isEmpty) return;
+    
+    setState(() {
+      isLoading = true;
+    });
+    
     try {
       final adminEmail = await ConferenceState.getAdminEmail();
       if (adminEmail == null) {
@@ -59,7 +68,7 @@ class _MessageDetailsState extends State<MessageDetails> {
       }
 
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/add_messageReplies.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/add_messageReplies.php'),
         body: {
           'message_id': widget.messageId,
           'reply_message': _replyController.text,
@@ -82,9 +91,13 @@ class _MessageDetailsState extends State<MessageDetails> {
   }
 
   Future<void> _deleteMessage() async {
+    setState(() {
+      isLoading = true;
+    });
+    
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/delete_message.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/delete_message.php'),
         body: {
           'message_id': widget.messageId,
         },

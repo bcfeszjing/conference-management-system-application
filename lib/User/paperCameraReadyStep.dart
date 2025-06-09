@@ -8,6 +8,7 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class PaperCameraReadyStep extends StatefulWidget {
   final String paperId;
@@ -36,9 +37,11 @@ class _PaperCameraReadyStepState extends State<PaperCameraReadyStep> {
 
   Future<void> fetchPaperData() async {
     try {
-      final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/get_paperCameraReadyStep.php'),
-        body: {'paper_id': widget.paperId},
+      final response = await http.get(
+        Uri.parse('${AppConfig.baseUrl}user/get_paperCameraReadyStep.php'),
+        headers: {
+          'paper_id': widget.paperId,
+        },
       );
 
       if (response.statusCode == 200) {

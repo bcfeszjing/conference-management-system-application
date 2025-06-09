@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
+import '../config/app_config.dart';
 
 class ApplyReviewer extends StatefulWidget {
   const ApplyReviewer({Key? key}) : super(key: key);
@@ -43,7 +44,7 @@ class _ApplyReviewerState extends State<ApplyReviewer> {
       });
       
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_fields.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_fields.php'),
       );
       
       if (response.statusCode == 200) {
@@ -153,7 +154,7 @@ class _ApplyReviewerState extends State<ApplyReviewer> {
       // Create multipart request
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/user/apply_reviewer.php'),
+        Uri.parse('${AppConfig.baseUrl}user/apply_reviewer.php'),
       );
 
       // Add text fields

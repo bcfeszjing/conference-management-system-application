@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; // Import http package for API calls
 import 'dart:convert'; // Import for JSON encoding
 import 'manageConferencePage.dart'; // Import the ManageConferencePage
+import '../config/app_config.dart'; // Import AppConfig
 
 class AddConferencePage extends StatefulWidget {
   @override
@@ -594,7 +595,7 @@ class _AddConferencePageState extends State<AddConferencePage> {
 
   Future<void> _saveConference() async {
     final response = await http.post(
-      Uri.parse('https://cmsa.digital/admin/add_conference.php'),
+      Uri.parse('${AppConfig.baseUrl}admin/add_conference.php'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

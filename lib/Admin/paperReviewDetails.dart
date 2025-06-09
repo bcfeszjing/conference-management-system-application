@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
 import 'paperReviewRubric.dart';
+import '../config/app_config.dart';
 
 class PaperReviewDetails extends StatefulWidget {
   final String reviewId;
@@ -444,7 +445,7 @@ class _PaperReviewDetailsState extends State<PaperReviewDetails> {
   Future<void> fetchReviewDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperReviewDetails.php?review_id=${widget.reviewId}')
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperReviewDetails.php?review_id=${widget.reviewId}')
       );
 
       if (response.statusCode == 200) {
@@ -474,7 +475,7 @@ class _PaperReviewDetailsState extends State<PaperReviewDetails> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/edit_reviewRelease.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_reviewRelease.php'),
         body: {
           'review_id': widget.reviewId,
           'user_release': newStatus,
@@ -563,7 +564,7 @@ class _PaperReviewDetailsState extends State<PaperReviewDetails> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/delete_paperReviewer.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/delete_paperReviewer.php'),
         body: {
           'review_id': widget.reviewId,
         },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/services/conference_state.dart';
+import '../config/app_config.dart';
 
 class AddRubricDialog extends StatefulWidget {
   final Function onRubricAdded;
@@ -15,6 +16,7 @@ class AddRubricDialog extends StatefulWidget {
 class _AddRubricDialogState extends State<AddRubricDialog> {
   final TextEditingController _rubricController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isSubmitting = false;
 
   Future<void> _submitRubric() async {
     if (!_formKey.currentState!.validate()) return;
@@ -23,15 +25,15 @@ class _AddRubricDialogState extends State<AddRubricDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Add'),
+          title: Text('Confirm'),
           content: Text('Are you sure you want to add this rubric?'),
-          actions: [
+          actions: <Widget>[
             TextButton(
               child: Text('Cancel'),
               onPressed: () => Navigator.of(context).pop(false),
             ),
             TextButton(
-              child: Text('Add'),
+              child: Text('OK'),
               onPressed: () => Navigator.of(context).pop(true),
             ),
           ],
@@ -41,11 +43,15 @@ class _AddRubricDialogState extends State<AddRubricDialog> {
 
     if (confirm != true) return;
 
+    setState(() {
+      _isSubmitting = true;
+    });
+    
     try {
       final conferenceId = await ConferenceState.getSelectedConferenceId();
       
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/add_rubric.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/add_rubric.php'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'rubric_text': _rubricController.text,

@@ -4,6 +4,7 @@ import 'dart:convert';
 import '../services/conference_state.dart';
 import 'package:CMSapplication/Admin/manageNewsPage.dart';
 import 'dart:async';
+import '../config/app_config.dart';
 
 class AddNews extends StatefulWidget {
   const AddNews({Key? key}) : super(key: key);
@@ -137,7 +138,7 @@ class _AddNewsState extends State<AddNews> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/check_email_progress.php?reference_id=$_referenceId'),
+        Uri.parse('${AppConfig.baseUrl}admin/check_email_progress.php?reference_id=$_referenceId'),
       ).timeout(Duration(seconds: 10));
 
       if (response.statusCode == 200 && mounted) {
@@ -224,7 +225,7 @@ class _AddNewsState extends State<AddNews> {
         }
         
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/admin/add_news.php'),
+          Uri.parse('${AppConfig.baseUrl}admin/add_news.php'),
           body: requestData,
         ).timeout(timeoutDuration);
         
@@ -246,7 +247,7 @@ class _AddNewsState extends State<AddNews> {
           try {
             // Check if news was actually added despite the timeout
             final checkResponse = await http.get(
-              Uri.parse('https://cmsa.digital/admin/get_latest_news.php?conf_id=$confId'),
+              Uri.parse('${AppConfig.baseUrl}admin/get_latest_news.php?conf_id=$confId'),
             ).timeout(Duration(seconds: 10));
             
             if (checkResponse.statusCode == 200) {

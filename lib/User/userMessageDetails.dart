@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:CMSapplication/services/user_state.dart';
+import '../config/app_config.dart';
 
 class UserMessageDetails extends StatefulWidget {
   final int messageId;
@@ -31,9 +32,11 @@ class _UserMessageDetailsState extends State<UserMessageDetails> {
   }
 
   Future<void> fetchMessageDetails() async {
+    setState(() => isLoading = true);
+    
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userMessageDetails.php?message_id=${widget.messageId}'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userMessageDetails.php?message_id=${widget.messageId}'),
       );
 
       if (response.statusCode == 200) {
@@ -67,7 +70,7 @@ class _UserMessageDetailsState extends State<UserMessageDetails> {
       }
 
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/add_userMessageReplies.php'),
+        Uri.parse('${AppConfig.baseUrl}user/add_userMessageReplies.php'),
         body: {
           'message_id': widget.messageId.toString(),
           'reply_message': _replyController.text,
@@ -122,7 +125,7 @@ class _UserMessageDetailsState extends State<UserMessageDetails> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/delete_userMessagesDetails.php'),
+        Uri.parse('${AppConfig.baseUrl}user/delete_userMessagesDetails.php'),
         body: {
           'message_id': widget.messageId.toString(),
         },

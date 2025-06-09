@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:CMSapplication/User/paperDetailsStep.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http_parser/http_parser.dart';
+import '../config/app_config.dart';
 
 class EditPaperDetailsStep extends StatefulWidget {
   final String paperId;
@@ -47,7 +48,7 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
   Future<void> fetchPaperDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_editPaperDetailsStep.php?paper_id=${widget.paperId}')
+        Uri.parse('${AppConfig.baseUrl}user/get_editPaperDetailsStep.php?paper_id=${widget.paperId}')
       );
 
       if (response.statusCode == 200) {
@@ -137,7 +138,7 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
       });
 
       // First, update paper details via JSON request
-      final detailsRequest = http.Request('POST', Uri.parse('https://cmsa.digital/user/edit_paperDetailsStep.php'));
+      final detailsRequest = http.Request('POST', Uri.parse('${AppConfig.baseUrl}user/edit_paperDetailsStep.php'));
       
       // Set headers
       detailsRequest.headers.addAll({
@@ -179,7 +180,7 @@ class _EditPaperDetailsStepState extends State<EditPaperDetailsStep> {
         // Create multipart request for file uploads
         var uploadRequest = http.MultipartRequest(
           'POST',
-          Uri.parse('https://cmsa.digital/user/upload_paperFiles.php'),
+          Uri.parse('${AppConfig.baseUrl}user/upload_paperFiles.php'),
         );
         
         // Add paper ID

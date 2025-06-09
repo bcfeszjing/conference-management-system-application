@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class PaperPaymentDetails extends StatefulWidget {
   final String paperId;
@@ -57,7 +58,7 @@ class _PaperPaymentDetailsState extends State<PaperPaymentDetails> {
   Future<void> _fetchPaymentData() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperPaymentDetails.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperPaymentDetails.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {
@@ -131,7 +132,7 @@ class _PaperPaymentDetailsState extends State<PaperPaymentDetails> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/edit_paperPaymentDetails.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/edit_paperPaymentDetails.php'),
         body: {
           'payment_id': _paymentId,
           'payment_status': _selectedStatus,
@@ -228,7 +229,7 @@ class _PaperPaymentDetailsState extends State<PaperPaymentDetails> {
       // Check if it's already a complete URL
       final String downloadUrl = paymentFilename.startsWith('http') 
           ? paymentFilename 
-          : 'https://cmsa.digital/assets/payments/${paymentFilename}.pdf';
+          : '${AppConfig.baseUrl}assets/payments/${paymentFilename}.pdf';
       
       // Get filename from either the URL or use the original name with extension
       final String fileName = paymentFilename.startsWith('http')

@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:CMSapplication/services/user_state.dart';
 import 'package:CMSapplication/User/PaperStepDashboard.dart';
 import 'package:CMSapplication/User/selectConference.dart';
+import '../config/app_config.dart';
 
 class ManageUserPapersPage extends StatefulWidget {
   const ManageUserPapersPage({Key? key}) : super(key: key);
@@ -65,7 +66,7 @@ class _ManageUserPapersPageState extends State<ManageUserPapersPage> {
       if (userId == null) return;
 
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userPapers.php?user_id=$userId'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userPapers.php?user_id=$userId'),
       );
 
       if (response.statusCode == 200) {

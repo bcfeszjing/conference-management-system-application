@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/app_config.dart'; // Import AppConfig
 
 class PaperReviewRubric extends StatefulWidget {
   final String reviewId;
@@ -27,9 +28,13 @@ class _PaperReviewRubricState extends State<PaperReviewRubric> {
   }
 
   Future<void> fetchRubricData() async {
+    setState(() {
+      isLoading = true;
+    });
+    
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/admin/get_paperReviewRubric.php?review_id=${widget.reviewId.toString()}'),
+        Uri.parse('${AppConfig.baseUrl}admin/get_paperReviewRubric.php?review_id=${widget.reviewId.toString()}'),
       );
 
       if (response.statusCode == 200) {

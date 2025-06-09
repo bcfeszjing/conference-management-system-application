@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
+import '../config/app_config.dart';
 
 class PaperReviewRubrics2 extends StatefulWidget {
   final String reviewId;
@@ -240,7 +241,7 @@ class _PaperReviewRubrics2State extends State<PaperReviewRubrics2> {
       // Create form data
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/user/add_paperReviewRubrics2.php'),
+        Uri.parse('${AppConfig.baseUrl}user/add_paperReviewRubrics2.php'),
       );
 
       // Add text fields

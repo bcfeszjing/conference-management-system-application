@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:CMSapplication/User/resetPassword.dart';
+import '../config/app_config.dart';
 
 class ForgetPasswordVerificationPage extends StatefulWidget {
   final int userId;
@@ -55,7 +56,7 @@ class _ForgetPasswordVerificationPageState extends State<ForgetPasswordVerificat
     
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/forget_password.php'),
+        Uri.parse('${AppConfig.baseUrl}user/forget_password.php'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'user_id': widget.userId.toString(),
@@ -103,7 +104,7 @@ class _ForgetPasswordVerificationPageState extends State<ForgetPasswordVerificat
       
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/user/forget_passwordVerification.php'),
+          Uri.parse('${AppConfig.baseUrl}user/forget_passwordVerification.php'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'user_id': widget.userId.toString(),

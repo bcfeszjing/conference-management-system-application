@@ -10,6 +10,7 @@ import 'package:CMSapplication/services/user_state.dart';
 import 'package:intl/intl.dart';
 import 'package:CMSapplication/User/userMessageDetails.dart';
 import 'package:CMSapplication/User/addUserMessages.dart';
+import '../config/app_config.dart';
 
 class ManageUserMessagesPage extends StatefulWidget {
   const ManageUserMessagesPage({Key? key}) : super(key: key);
@@ -55,7 +56,7 @@ class _ManageUserMessagesPageState extends State<ManageUserMessagesPage> {
       }
 
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_userMessages.php?user_id=$userId'),
+        Uri.parse('${AppConfig.baseUrl}user/get_userMessages.php?user_id=$userId'),
       );
 
       if (response.statusCode == 200) {

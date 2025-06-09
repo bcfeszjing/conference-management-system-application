@@ -11,6 +11,7 @@ import 'package:CMSapplication/Admin/manageSettingsPage.dart';
 import 'package:CMSapplication/main.dart';
 import 'package:CMSapplication/services/conference_state.dart';
 import 'package:CMSapplication/Admin/paperDashboard.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class ManagePapersPage extends StatefulWidget {
   @override
@@ -73,7 +74,7 @@ class _ManagePapersPageState extends State<ManagePapersPage> {
     final confId = await ConferenceState.getSelectedConferenceId();
     
     final url = Uri.parse(
-        'https://cmsa.digital/admin/get_papers.php?search=$searchTerm&type=$_selectedSearchType&status=$_selectedStatus&conf_id=$confId');
+        '${AppConfig.baseUrl}admin/get_papers.php?search=$searchTerm&type=$_selectedSearchType&status=$_selectedStatus&conf_id=$confId');
     
     try {
       final response = await http.get(url);

@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:CMSapplication/services/user_state.dart';
 import 'package:CMSapplication/User/manageUserPapersPage.dart';
 import 'package:flutter/foundation.dart';
+import '../config/app_config.dart';
 
 class AddUserPaper extends StatefulWidget {
   final String confId;
@@ -56,7 +57,7 @@ class _AddUserPaperState extends State<AddUserPaper> {
   Future<void> fetchFields() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_addUserPaper.php'),
+        Uri.parse('${AppConfig.baseUrl}user/get_addUserPaper.php'),
       );
 
       if (response.statusCode == 200) {
@@ -297,7 +298,7 @@ class _AddUserPaperState extends State<AddUserPaper> {
       // Create multipart request for file uploads
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://cmsa.digital/user/add_userPaper.php'),
+        Uri.parse('${AppConfig.baseUrl}user/add_userPaper.php'),
       );
 
       // Add text fields

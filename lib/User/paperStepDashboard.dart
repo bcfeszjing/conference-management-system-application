@@ -6,6 +6,7 @@ import 'package:CMSapplication/User/paperReviewStep.dart';
 import 'package:CMSapplication/User/paperCameraReadyStep.dart';
 import 'package:CMSapplication/User/paperPaymentStep.dart';
 import 'package:CMSapplication/User/paperAddCoauthorStep.dart';
+import '../config/app_config.dart';
 
 class PaperStepDashboard extends StatefulWidget {
   final String paperId;
@@ -29,7 +30,7 @@ class _PaperStepDashboardState extends State<PaperStepDashboard> {
   Future<void> _fetchPaperStatus() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_paperDetails.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}user/get_paperDetails.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {

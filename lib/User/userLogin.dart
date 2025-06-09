@@ -7,6 +7,7 @@ import 'package:CMSapplication/services/user_state.dart';
 import 'signup.dart';
 import 'package:CMSapplication/User/signupProfile.dart';
 import 'package:CMSapplication/User/forgetPassword.dart';
+import '../config/app_config.dart';
 
 class UserLoginPage extends StatefulWidget {
   const UserLoginPage({super.key});
@@ -67,7 +68,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
       
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/user/user_login.php'),
+          Uri.parse('${AppConfig.baseUrl}user/user_login.php'),
           body: {
             'email': _emailController.text,
             'password': _passwordController.text,

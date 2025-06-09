@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/services/conference_state.dart';
 import 'package:CMSapplication/Admin/addRubric.dart';
+import '../config/app_config.dart'; // Import AppConfig
 
 class SettingRubricsItemPage extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _SettingRubricsItemPageState extends State<SettingRubricsItemPage> {
     if (selectedConferenceId != null) {
       try {
         final response = await http.get(
-          Uri.parse('https://cmsa.digital/admin/get_settingRubricsItem.php?conf_id=$selectedConferenceId'),
+          Uri.parse('${AppConfig.baseUrl}admin/get_settingRubricsItem.php?conf_id=$selectedConferenceId'),
         );
 
         if (response.statusCode == 200) {
@@ -69,7 +70,7 @@ class _SettingRubricsItemPageState extends State<SettingRubricsItemPage> {
     if (confirm == true) {
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/admin/delete_rubric.php'),
+          Uri.parse('${AppConfig.baseUrl}admin/delete_rubric.php'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({'rubric_id': rubricId}),
         );

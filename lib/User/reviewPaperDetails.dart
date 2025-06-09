@@ -8,6 +8,7 @@ import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:universal_html/html.dart' as html;
+import '../config/app_config.dart';
 
 class ReviewPaperDetails extends StatefulWidget {
   final String reviewId;
@@ -59,7 +60,7 @@ class _ReviewPaperDetailsState extends State<ReviewPaperDetails> {
   Future<void> fetchPaperDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_reviewPaperDetails.php?paper_id=${widget.paperId}&review_id=${widget.reviewId}'),
+        Uri.parse('${AppConfig.baseUrl}user/get_reviewPaperDetails.php?paper_id=${widget.paperId}&review_id=${widget.reviewId}'),
       );
 
       if (response.statusCode == 200) {
@@ -113,7 +114,7 @@ class _ReviewPaperDetailsState extends State<ReviewPaperDetails> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/decline_reviewPaper.php'),
+        Uri.parse('${AppConfig.baseUrl}user/decline_reviewPaper.php'),
         body: {
           'review_id': widget.reviewId,
         },

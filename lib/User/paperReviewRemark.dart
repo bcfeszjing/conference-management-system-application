@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/app_config.dart';
 
 class PaperReviewRemark extends StatefulWidget {
   final String reviewId;
 
-  const PaperReviewRemark({Key? key, required this.reviewId}) : super(key: key);
+  const PaperReviewRemark({
+    Key? key,
+    required this.reviewId,
+  }) : super(key: key);
 
   @override
-  _PaperReviewRemarkState createState() => _PaperReviewRemarkState();
+  State<PaperReviewRemark> createState() => _PaperReviewRemarkState();
 }
 
 class _PaperReviewRemarkState extends State<PaperReviewRemark> {
+  Map<String, dynamic>? reviewDetails;
   bool isLoading = true;
   String reviewerRemarks = '';
   List<dynamic> rubrics = [];
@@ -19,13 +24,13 @@ class _PaperReviewRemarkState extends State<PaperReviewRemark> {
   @override
   void initState() {
     super.initState();
-    fetchReviewRemarks();
+    fetchReviewDetails();
   }
 
-  Future<void> fetchReviewRemarks() async {
+  Future<void> fetchReviewDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_paperReviewRemark.php?review_id=${widget.reviewId}')
+        Uri.parse('${AppConfig.baseUrl}user/get_paperReviewRemark.php?review_id=${widget.reviewId}')
       );
 
       if (response.statusCode == 200) {

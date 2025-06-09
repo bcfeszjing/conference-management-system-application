@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:country_picker/country_picker.dart';
 import 'manageUserNewsPage.dart';
 import '../services/user_state.dart';
+import '../config/app_config.dart';
 
 class SignupProfilePage extends StatefulWidget {
   const SignupProfilePage({super.key});
@@ -56,7 +57,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
       try {
         final userId = await UserState.getUserId();
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/user/signup_profile.php'),
+          Uri.parse('${AppConfig.baseUrl}user/signup_profile.php'),
           body: {
             'user_id': userId,
             'user_title': _selectedTitle,

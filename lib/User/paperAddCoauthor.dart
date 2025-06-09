@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/app_config.dart';
 
 class PaperAddCoauthor extends StatefulWidget {
   final String paperId;
@@ -38,7 +39,7 @@ class _PaperAddCoauthorState extends State<PaperAddCoauthor> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://cmsa.digital/user/add_paperAddCoauthor.php'),
+          Uri.parse('${AppConfig.baseUrl}user/add_paperAddCoauthor.php'),
           body: {
             'paper_id': widget.paperId,
             'coauthor_name': capitalizeEachWord(_nameController.text.trim()),

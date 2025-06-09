@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/services/conference_state.dart';
+import '../config/app_config.dart';
 
 class AddFieldDialog extends StatefulWidget {
   final Function onFieldAdded;
@@ -15,6 +16,7 @@ class AddFieldDialog extends StatefulWidget {
 class _AddFieldDialogState extends State<AddFieldDialog> {
   final TextEditingController _fieldController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isSubmitting = false;
 
   Future<void> _submitField() async {
     if (!_formKey.currentState!.validate()) return;
@@ -42,11 +44,15 @@ class _AddFieldDialogState extends State<AddFieldDialog> {
 
     if (confirm != true) return;
 
+    setState(() {
+      _isSubmitting = true;
+    });
+
     try {
       final conferenceId = await ConferenceState.getSelectedConferenceId();
       
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/admin/add_field.php'),
+        Uri.parse('${AppConfig.baseUrl}admin/add_field.php'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'field_title': _fieldController.text,
@@ -73,6 +79,10 @@ class _AddFieldDialogState extends State<AddFieldDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
     }
   }
 

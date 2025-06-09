@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:CMSapplication/User/paperAddCoauthor.dart';
+import '../config/app_config.dart';
 
 class PaperAddCoauthorStep extends StatefulWidget {
   final String paperId;
@@ -27,7 +28,7 @@ class _PaperAddCoauthorStepState extends State<PaperAddCoauthorStep> {
   Future<void> fetchCoauthors() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cmsa.digital/user/get_paperAddCoauthorStep.php?paper_id=${widget.paperId}'),
+        Uri.parse('${AppConfig.baseUrl}user/get_paperAddCoauthorStep.php?paper_id=${widget.paperId}'),
       );
 
       if (response.statusCode == 200) {
@@ -62,7 +63,7 @@ class _PaperAddCoauthorStepState extends State<PaperAddCoauthorStep> {
   Future<void> _deleteCoauthor(int coauthorId) async {
     try {
       final response = await http.post(
-        Uri.parse('https://cmsa.digital/user/delete_paperAddCoauthorStep.php'),
+        Uri.parse('${AppConfig.baseUrl}user/delete_paperAddCoauthorStep.php'),
         body: {
           'coauthor_id': coauthorId.toString(),
         },
