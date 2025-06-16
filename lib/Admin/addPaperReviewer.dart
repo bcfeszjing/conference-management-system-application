@@ -17,7 +17,6 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
   String _selectedSearchType = 'Name';
   List<dynamic> _reviewers = [];
   bool _isLoading = false;
-  String? _selectedReviewer;
   bool _isSubmitting = false;
 
   @override
@@ -55,14 +54,7 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
     }
   }
 
-  Future<void> _assignReviewer() async {
-    if (_selectedReviewer == null || _selectedReviewer!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select a reviewer')),
-      );
-      return;
-    }
-    
+  Future<void> _assignReviewer(String reviewerId) async {
     setState(() {
       _isSubmitting = true;
     });
@@ -72,7 +64,7 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
         Uri.parse('${AppConfig.baseUrl}admin/add_paperReviewer.php'),
         body: {
           'paper_id': widget.paperId,
-          'user_id': _selectedReviewer,
+          'user_id': reviewerId,
         },
       );
 
@@ -205,6 +197,8 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
           Expanded(
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
+                : _isSubmitting
+                ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     padding: EdgeInsets.all(16),
                     itemCount: _reviewers.length,
@@ -235,7 +229,7 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
                                 ),
                               ),
                               ElevatedButton(
-                                onPressed: () => _selectedReviewer = reviewer['user_id'].toString(),
+                                onPressed: () => _assignReviewer(reviewer['user_id'].toString()),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xFFFFB800),
                                   foregroundColor: Colors.black,
@@ -253,25 +247,6 @@ class _AddPaperReviewerState extends State<AddPaperReviewer> {
                       );
                     },
                   ),
-          ),
-          SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _assignReviewer,
-            child: Text(
-              'Assign Reviewer',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              padding: EdgeInsets.symmetric(vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
           ),
         ],
       ),

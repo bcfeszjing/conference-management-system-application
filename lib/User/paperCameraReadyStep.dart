@@ -37,21 +37,53 @@ class _PaperCameraReadyStepState extends State<PaperCameraReadyStep> {
 
   Future<void> fetchPaperData() async {
     try {
-      final response = await http.get(
+      print('Fetching data for paper ID: ${widget.paperId}');
+      
+      // Change from GET to POST request
+      final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}user/get_paperCameraReadyStep.php'),
-        headers: {
+        body: {
           'paper_id': widget.paperId,
         },
       );
 
+      print('API Response status code: ${response.statusCode}');
+      print('API Response body: ${response.body}');
+
       if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        print('API Response (decoded) for paper ${widget.paperId}: $jsonResponse');
+        
+        // Check if the response is in the expected format
+        if (jsonResponse is Map<String, dynamic>) {
+          setState(() {
+            paperData = jsonResponse;
+            isLoading = false;
+          });
+          
+          if (paperData!.containsKey('paper_status')) {
+            print('Paper status from API: "${paperData!['paper_status']}"');
+          } else {
+            print('Response does not contain paper_status field');
+          }
+        } else {
+          print('API Response is not a Map: ${jsonResponse.runtimeType}');
+          setState(() {
+            paperData = {'error': 'Invalid response format'};
+            isLoading = false;
+          });
+        }
+      } else {
+        print('API returned error status code: ${response.statusCode}');
         setState(() {
-          paperData = json.decode(response.body);
+          paperData = {'error': 'Server error: ${response.statusCode}'};
           isLoading = false;
         });
       }
     } catch (e) {
+      print('Error fetching paper data: $e');
       setState(() {
+        paperData = {'error': e.toString()};
         isLoading = false;
       });
     }
@@ -469,22 +501,46 @@ class _PaperCameraReadyStepState extends State<PaperCameraReadyStep> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final status = paperData?['paper_status'] ?? '';
+    print('Building content with paperData: $paperData');
     
-    if (['Submitted', 'Received', 'Resubmit', 'Under Review', 'Withdraw', 'Rejected']
-        .contains(status)) {
+    // Check if paperData is null or contains an error
+    if (paperData == null) {
+      print('paperData is null');
+      return _buildNotAvailableBox();
+    } 
+    
+    if (paperData!.containsKey('error')) {
+      print('API returned error: ${paperData!['error']}');
       return _buildNotAvailableBox();
     }
 
-    switch (status) {
-      case 'Accepted':
-        return _buildAcceptedBox();
-      case 'Pre-Camera Ready':
-        return _buildPreCameraReadyBox();
-      case 'Camera Ready':
-        return _buildCameraReadyBox();
-      default:
-        return _buildNotAvailableBox();
+    final status = paperData?['paper_status'] ?? '';
+    print('Paper status is: "$status"');
+    
+    // Convert status to lowercase for case-insensitive comparison
+    String statusLower = status.toLowerCase();
+    print('Status in lowercase: $statusLower');
+    
+    // Check non-eligible statuses first
+    if (['submitted', 'received', 'resubmit', 'under review', 'withdraw', 'rejected']
+        .contains(statusLower)) {
+      print('Status is in the not available list');
+      return _buildNotAvailableBox();
+    }
+
+    // Case-insensitive comparison for the positive statuses
+    if (statusLower.contains('accepted')) {
+      print('Showing Accepted UI');
+      return _buildAcceptedBox();
+    } else if (statusLower.contains('pre-camera') || statusLower.contains('pre camera')) {
+      print('Showing Pre-Camera Ready UI');
+      return _buildPreCameraReadyBox();
+    } else if (statusLower.contains('camera ready')) {
+      print('Showing Camera Ready UI');
+      return _buildCameraReadyBox();
+    } else {
+      print('Status did not match any condition, showing Not Available');
+      return _buildNotAvailableBox();
     }
   }
 
